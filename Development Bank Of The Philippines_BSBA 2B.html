@@ -1,0 +1,2098 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Development Bank of the Philippines</title>
+  <style>
+    /* General Styles */
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f5f5f5;
+      color: #333;
+      overflow-x: hidden;
+      display: flex; /* Make body a flex container */
+    }
+    
+    /* Sidebar */
+    .sidebar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 250px;
+      height: 100vh;
+      background-color: #004d99;
+      color: white;
+      padding: 20px 0;
+      overflow-y: auto;
+      z-index: 100;
+      box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+      flex-shrink: 0; /* Prevent sidebar from shrinking */
+    }
+    
+    .logo-container {
+      padding: 0 20px;
+      margin-bottom: 30px;
+      text-align: center;
+    }
+    
+    .logo-placeholder {
+      width: 100px;
+      height: 100px;
+      background-color: white;
+      color: #004d99;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      font-size: 1.2em;
+      margin: 0 auto;
+      border-radius: 50%;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+    }
+    
+    .nav-menu {
+      list-style: none;
+      padding: 0;
+    }
+    
+    .nav-menu li {
+      margin-bottom: 5px;
+    }
+    
+    .nav-menu a {
+      display: block;
+      padding: 10px 20px;
+      color: white;
+      text-decoration: none;
+      transition: background 0.3s;
+    }
+    
+    .nav-menu a:hover {
+      background-color: #003d7a;
+    }
+    
+    .nav-menu a.active {
+      background-color: #003d7a;
+      border-left: 4px solid white;
+      font-weight: bold;
+    }
+    
+    /* Main Content */
+    .container {
+      flex: 1;
+      margin-left: 250px; /* Equal to sidebar width */
+      padding: 20px;
+      box-sizing: border-box;
+      min-height: 100vh;
+      width: calc(100% - 250px); /* Ensure width is calculated correctly */
+    }
+    
+    .content {
+      width: 100%;
+    }
+    
+    section {
+      margin-bottom: 50px;
+      background-color: white;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+      display: none; /* Hide all sections by default */
+    }
+    
+    section.active {
+      display: block; /* Show only the active section */
+    }
+    
+    h2 {
+      color: #004d99;
+      border-bottom: 2px solid #004d99;
+      padding-bottom: 10px;
+      margin-top: 0;
+    }
+    
+    @media (max-width: 768px) {
+      body {
+        flex-direction: column;
+      }
+      
+      .sidebar {
+        position: relative;
+        width: 100%;
+        height: auto;
+      }
+      
+      .container {
+        margin-left: 0;
+        width: 100%;
+        padding: 10px;
+      }
+    }
+    
+    /* Profile Cards */
+    .profile-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 30px;
+      margin-top: 30px;
+      width: 100%;
+    }
+    
+    .profile-card {
+      background-color: #f9f9f9;
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+      transition: transform 0.3s, box-shadow 0.3s;
+      display: flex;
+      flex-direction: column;
+      height: 450px;
+    }
+    
+    .profile-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+    }
+    
+    .profile-image {
+      height: 280px;
+      overflow: hidden;
+      background-color: #e0e0e0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .profile-image img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.5s;
+    }
+    
+    .profile-card:hover .profile-image img {
+      transform: scale(1.05);
+    }
+    
+    .profile-details {
+      padding: 20px;
+    }
+    
+    .profile-details h3 {
+      color: #004d99;
+      margin: 0 0 5px 0;
+      font-size: 1.3em;
+    }
+    
+    .profile-details p:first-of-type {
+      color: #666;
+      font-weight: bold;
+      margin-top: 0;
+      margin-bottom: 15px;
+      font-size: 0.95em;
+    }
+    
+    .profile-details p:last-child {
+      margin-bottom: 0;
+      line-height: 1.6;
+      font-size: 0.95em;
+    }
+    
+    /* Team */
+    .team-member {
+      display: flex;
+      margin-bottom: 30px;
+      background-color: #f9f9f9;
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+    }
+    
+    .team-photo {
+      width: 200px;
+      height: 200px;
+      overflow: hidden;
+      flex-shrink: 0;
+    }
+    
+    .team-photo img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    
+    .team-info {
+      padding: 20px;
+    }
+    
+    .team-info h3 {
+      color: #004d99;
+      margin-top: 0;
+    }
+    
+    /* Custom */
+    .banner {
+      width: 100%;
+      height: 400px;
+      background-image: url('https://architecturehub.ph/wp-content/uploads/2020/03/Development-Bank-of-the-Philippines-1024x575.jpg');
+      background-size: cover;
+      background-position: center;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      text-align: center;
+      margin-bottom: 40px;
+      position: relative;
+      border-radius: 10px;
+      overflow: hidden;
+    }
+    
+    .banner::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+      z-index: 1;
+    }
+    
+    .banner-content {
+      position: relative;
+      z-index: 2;
+      max-width: 800px;
+      padding: 20px;
+    }
+    
+    .banner-content h1 {
+      font-size: 2.5em;
+      margin-bottom: 10px;
+    }
+    
+    .banner-content p {
+      font-size: 1.2em;
+      color: #004d99;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    }
+    
+    .building-info {
+      margin-top: 25px;
+      font-size: 1.1em;
+      line-height: 1.6;
+    }
+
+    /* Glass UI Home Styles */
+    .glass-home {
+      position: relative;
+      min-height: 100vh;
+      margin: -20px -30px 50px -30px;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .home-background {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-image: url('https://www.dbp.ph/wp-content/uploads/2018/11/DBP-Bldg-news-1080x714.png');
+      background-size: cover;
+      background-position: center;
+      background-attachment: fixed;
+      filter: brightness(0.9);
+      z-index: 0;
+    }
+
+    .glass-container {
+      position: relative;
+      z-index: 1;
+      width: 90%;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 40px;
+      background: rgba(255, 255, 255, 0.15);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border-radius: 20px;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      box-shadow: 0 8px 32px rgba(0, 77, 153, 0.1);
+    }
+
+    .glass-home .home-content {
+      color: white;
+      text-align: center;
+    }
+
+    .glass-home .home-content h1 {
+      font-size: 3em;
+      font-weight: 700;
+      margin-bottom: 10px;
+      text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+      animation: fadeInDown 1s ease-out;
+    }
+
+    .glass-home .home-content h3 {
+      font-size: 1.5em;
+      font-weight: 500;
+      color: #f0f0f0;
+      margin-bottom: 30px;
+      text-shadow: 0 2px 8px rgba(0, 0, 0, 0.6);
+      animation: fadeInUp 1s ease-out;
+    }
+
+    .glass-card {
+      background: rgba(255, 255, 255, 0.2);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-radius: 15px;
+      padding: 25px;
+      margin-top: 30px;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+      animation: fadeIn 1.2s ease-out;
+    }
+
+    .glass-home .building-info p {
+      color: #000000;
+      margin-bottom: 15px;
+      font-size: 1.1em;
+      line-height: 1.7;
+      text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+    }
+
+    .logo-img {
+      background-image: url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTmsxVy5Irgxn6Y0QPcznRlPXQD7D9tM-wuHg&s');
+      background-size: cover;
+      background-position: center;
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      margin: 0 auto 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      border: 2px solid rgba(255, 255, 255, 0.5);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+      animation: pulse 2s infinite;
+    }
+
+    /* Page transition effects */
+    .page-transition {
+      animation: fadeInPage 0.5s ease-out;
+    }
+
+    @keyframes fadeInPage {
+      from {
+        opacity: 0;
+        transform: translateY(15px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes fadeInDown {
+      from {
+        opacity: 0;
+        transform: translateY(-20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    @keyframes pulse {
+      0% {
+        box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.6);
+      }
+      70% {
+        box-shadow: 0 0 0 10px rgba(255, 255, 255, 0);
+      }
+      100% {
+        box-shadow: 0 0 0 0 rgba(255, 255, 255, 0);
+      }
+    }
+
+    /* Nav buttons for page navigation */
+    .page-nav {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 30px;
+    }
+
+    .nav-btn {
+      background-color: #004d99;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 5px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: background-color 0.3s, transform 0.2s;
+    }
+
+    .nav-btn:hover {
+      background-color: #003d7a;
+      transform: translateY(-2px);
+    }
+
+    .nav-btn:disabled {
+      background-color: #ccc;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    @media (max-width: 768px) {
+      .glass-home {
+        margin: -10px -10px 30px -10px;
+      }
+      
+      .glass-container {
+        padding: 20px;
+      }
+      
+      .glass-home .home-content h1 {
+        font-size: 2em;
+      }
+      
+      .glass-home .home-content h3 {
+        font-size: 1.2em;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Sidebar Navigation -->
+  <div class="sidebar">
+    <div class="logo-container">
+      <div class="logo-img"></div>
+      <h3 style="margin-top: 10px;">DBP</h3>
+    </div>
+    <ul class="nav-menu">
+      <li><a href="#home" class="active">Home</a></li>
+      <li><a href="#background">Background</a></li>
+      <li><a href="#corporate-profile">Corporate Profile</a></li>
+      <li><a href="#vision-mission">Vision & Mission</a></li>
+      <li><a href="#branches">Branches & Offices</a></li>
+      <li><a href="#business-scope">Business Scope</a></li>
+      <li><a href="#products-services">Products & Services</a></li>
+      <li><a href="#financial-highlights">Financial Highlights</a></li>
+      <li><a href="#awards">Awards & Recognitions</a></li>
+      <li><a href="#structure">Organizational Structure</a></li>
+      <li><a href="#board">Board of Directors</a></li>
+      <li><a href="#management">Management Committee</a></li>
+      <li><a href="#capital">Capital Structure</a></li>
+      <li><a href="#governance">Corporate Governance</a></li>
+      <li><a href="#csr">Social Responsibility</a></li>
+      <li><a href="#financial-reports">Financial Reports</a></li>
+      <li><a href="#team">Our Team</a></li>
+      <li><a href="#references">References</a></li>
+      <li><a href="#disclaimer">Disclaimer</a></li>
+    </ul>
+  </div>
+
+  <div class="container">
+    <!-- Home/Landing Section -->
+    <section id="home" class="active glass-home">
+      <div class="home-background"></div>
+      <div class="glass-container">
+        <div class="home-content">
+          <div class="logo-img"></div>
+          <h1>DEVELOPMENT BANK OF THE PHILIPPINES</h1>
+          <h3>"We build Possibilities"</h3>
+          <div class="building-info glass-card">
+            <p>The DBP Head Office building, located at the heart of Makati City, stands as a symbol of the bank's enduring commitment to national development and progress. This iconic structure houses the central operations of the Philippines' premier development financial institution.</p>
+            <p>Established to serve as a catalyst for sustainable economic growth, the building's modern architecture reflects DBP's forward-thinking approach to development financing and nation-building.</p>
+          </div>
+        </div>
+      </div>
+      <div class="page-nav">
+        <button class="nav-btn" id="prev-btn" disabled>Previous</button>
+        <button class="nav-btn" id="next-btn">Next</button>
+      </div>
+    </section>
+
+    <!-- Background Section -->
+    <section id="background">
+      <h2>Background & History</h2>
+      <p>The Development Bank of the Philippines (DBP) was established in 1958 as a government-owned and controlled corporation (GOCC) to promote the economic development of the country. Initially created to provide financial assistance to industries and infrastructure projects, DBP has since expanded its services to support various sectors, including agriculture, housing, and social services.</p>
+      
+      <p>DBP has played a critical role in the development of the Philippine economy by funding projects that contribute to long-term growth, improve infrastructure, and enhance the quality of life for Filipinos. As one of the leading development banks in the country, DBP focuses on sustainable growth, financial inclusion, and promoting social and economic resilience, especially in underserved and rural areas. The bank is committed to supporting government programs, including public-private partnerships (PPP) and green initiatives.</p>
+      
+      <p>Over the years, DBP has continuously adapted to the changing needs of the economy, introducing innovative financial products, improving customer service, and ensuring that its operations are aligned with the country's development goals. Today, DBP is recognized as a major player in promoting national development and economic progress.</p>
+      
+      <div style="background-color: #f9f9f9; padding: 20px; border-left: 5px solid #004d99; margin-top: 20px;">
+        <h3 style="color: white; background-color: #004d99; padding: 15px; border-radius: 8px;">Head Office Address:</h3>
+        <address style="font-style: normal; line-height: 1.6;">
+          Development Bank of the Philippines (DBP)<br>
+          DBP Building, Sen. Gil J. Puyat Avenue, Makati City, Philippines<br>
+          Contact Number: +63 (2) 8818-9511
+        </address>
+      </div>
+      <div class="page-nav">
+        <button class="nav-btn" id="prev-btn">Previous</button>
+        <button class="nav-btn" id="next-btn">Next</button>
+      </div>
+    </section>
+
+    <!-- Corporate Profile Section -->
+    <section id="corporate-profile">
+      <h2>Corporate Profile</h2>
+      <p>The Development Bank of the Philippines (DBP) is a government-owned financial institution dedicated to supporting the sustainable economic development of the Philippines. As one of the country's primary development banks, DBP's mission is to foster inclusive growth by providing financial support to key sectors such as infrastructure, agriculture, housing, and the environment.</p>
+      
+      <p>Since its inception in 1958, DBP has been instrumental in financing projects that enhance national infrastructure, create jobs, reduce poverty, and improve the quality of life for Filipinos. With a focus on long-term development, DBP offers a range of financial products and services designed to help public and private entities, including loans, project financing, and investment solutions.</p>
+      
+      <p>DBP operates under the oversight of the Department of Finance and works closely with government agencies, private sector partners, and international organizations to advance national economic objectives. With its strategic approach, DBP continues to contribute to the country's growth by supporting sustainable development, financial inclusion, and environmental initiatives.</p>
+      
+      <h3>Subsidiaries and Affiliates</h3>
+      <p>DBP also has a number of subsidiaries and affiliates that extend its reach and impact in various sectors:</p>
+      
+      <div class="subsidiaries" style="margin-top: 20px;">
+        <div class="subsidiary" style="background-color: #f9f9f9; padding: 15px; margin-bottom: 15px; border-radius: 5px;">
+          <h4 style="color: #004d99; margin-bottom: 10px;">DBP Leasing Corporation (DBPLC)</h4>
+          <p>A wholly owned subsidiary of DBP, DBPLC provides lease financing solutions to private and government entities, supporting the acquisition of equipment and other capital assets for business operations and development.</p>
+        </div>
+        
+        <div class="subsidiary" style="background-color: #f9f9f9; padding: 15px; margin-bottom: 15px; border-radius: 5px;">
+          <h4 style="color: #004d99; margin-bottom: 10px;">DBP Data Center, Inc. (DBPDCI)</h4>
+          <p>This subsidiary is responsible for providing data management services, including data storage and disaster recovery solutions, to both public and private sectors.</p>
+        </div>
+        
+        <div class="subsidiary" style="background-color: #f9f9f9; padding: 15px; margin-bottom: 15px; border-radius: 5px;">
+          <h4 style="color: #004d99; margin-bottom: 10px;">DBP Insurance Brokerage, Inc. (DBP-IBI)</h4>
+          <p>A subsidiary of DBP, DBP-IBI offers insurance services, acting as an intermediary for individuals and businesses seeking insurance products to safeguard against potential risks.</p>
+        </div>
+        
+        <div class="subsidiary" style="background-color: #f9f9f9; padding: 15px; margin-bottom: 15px; border-radius: 5px;">
+          <h4 style="color: #004d99; margin-bottom: 10px;">DBP Management Corporation (DBPMC)</h4>
+          <p>DBPMC provides specialized asset management and investment services, helping manage and grow the bank's investment portfolio.</p>
+        </div>
+      </div>
+      
+      <p>These subsidiaries and affiliates allow DBP to extend its financial and advisory services to a wider range of sectors, supporting not only infrastructure development but also a variety of business and government needs, reinforcing its position as a cornerstone of national development.</p>
+      <div class="page-nav">
+        <button class="nav-btn" id="prev-btn">Previous</button>
+        <button class="nav-btn" id="next-btn">Next</button>
+      </div>
+    </section>
+
+    <!-- Vision, Mission, Goals Section -->
+    <section id="vision-mission">
+      <h2>Vision, Mission, Goals & Core Values</h2>
+
+      <div style="background-color: #f0f7ff; padding: 25px; border-radius: 8px; margin-bottom: 30px;">
+        <h3 style="color: #004d99; border-bottom: 2px solid #004d99; padding-bottom: 10px;">Vision</h3>
+        <p>To be the leading development bank in the Philippines, empowering sustainable economic growth and contributing to a prosperous and inclusive society through innovative financial solutions.</p>
+      </div>
+
+      <div style="background-color: #f0f7ff; padding: 25px; border-radius: 8px; margin-bottom: 30px;">
+        <h3 style="color: #004d99; border-bottom: 2px solid #004d99; padding-bottom: 10px;">Mission</h3>
+        <p>To provide responsive and effective financial products and services that promote economic development, reduce poverty, and enhance the quality of life for Filipinos. The Development Bank of the Philippines is committed to being a catalyst for progress by supporting infrastructure, agriculture, housing, and social development projects that contribute to the country's long-term growth and stability.</p>
+      </div>
+
+      <div style="background-color: #f0f7ff; padding: 25px; border-radius: 8px; margin-bottom: 30px;">
+        <h3 style="color: #004d99; border-bottom: 2px solid #004d99; padding-bottom: 10px;">Goals and Objectives</h3>
+        <ul style="list-style-type: none; padding-left: 0;">
+          <li style="margin-bottom: 15px; padding-left: 25px; position: relative;">
+            <strong style="color: #004d99; font-size: 1.1em;">Economic Development:</strong> 
+            <p>To finance key projects in infrastructure, agriculture, industry, and services that drive national economic progress and contribute to the welfare of the Filipino people.</p>
+          </li>
+          <li style="margin-bottom: 15px; padding-left: 25px; position: relative;">
+            <strong style="color: #004d99; font-size: 1.1em;">Financial Inclusion:</strong> 
+            <p>To extend financial services to underserved sectors, especially rural communities and micro, small, and medium enterprises (MSMEs), supporting job creation and poverty reduction.</p>
+          </li>
+          <li style="margin-bottom: 15px; padding-left: 25px; position: relative;">
+            <strong style="color: #004d99; font-size: 1.1em;">Sustainability:</strong> 
+            <p>To invest in projects that foster environmental sustainability and address the challenges of climate change, ensuring the protection of natural resources for future generations.</p>
+          </li>
+          <li style="margin-bottom: 15px; padding-left: 25px; position: relative;">
+            <strong style="color: #004d99; font-size: 1.1em;">Innovation and Efficiency:</strong> 
+            <p>To continuously improve banking services, introduce innovative financial products, and implement cutting-edge technology to enhance operational efficiency and customer experience.</p>
+          </li>
+          <li style="margin-bottom: 15px; padding-left: 25px; position: relative;">
+            <strong style="color: #004d99; font-size: 1.1em;">Public-Private Partnerships:</strong> 
+            <p>To actively support public-private partnership (PPP) initiatives that promote inclusive growth and infrastructure development.</p>
+          </li>
+        </ul>
+      </div>
+
+      <div style="background-color: #f0f7ff; padding: 25px; border-radius: 8px;">
+        <h3 style="color: #004d99; border-bottom: 2px solid #004d99; padding-bottom: 10px;">Core Values</h3>
+        <div style="display: flex; flex-wrap: wrap; justify-content: space-between; margin-top: 20px;">
+          <div style="width: 30%; min-width: 250px; margin-bottom: 20px;">
+            <h4 style="color: #004d99;">Integrity</h4>
+            <p>Upholding transparency, honesty, and ethical conduct in all our actions and decisions.</p>
+          </div>
+          <div style="width: 30%; min-width: 250px; margin-bottom: 20px;">
+            <h4 style="color: #004d99;">Excellence</h4>
+            <p>Striving for the highest standards of performance, ensuring the quality and effectiveness of the services we provide.</p>
+          </div>
+          <div style="width: 30%; min-width: 250px; margin-bottom: 20px;">
+            <h4 style="color: #004d99;">Innovation</h4>
+            <p>Continuously exploring new ideas and technologies that can improve banking services, support economic development, and meet the evolving needs of our clients.</p>
+          </div>
+          <div style="width: 30%; min-width: 250px; margin-bottom: 20px;">
+            <h4 style="color: #004d99;">Accountability</h4>
+            <p>Being responsible for our actions, ensuring that we meet the expectations of our stakeholders and contribute to sustainable national development.</p>
+          </div>
+          <div style="width: 30%; min-width: 250px; margin-bottom: 20px;">
+            <h4 style="color: #004d99;">Customer-Centricity</h4>
+            <p>Putting the needs of our clients at the center of everything we do, ensuring we provide solutions that meet their unique needs and contribute to their success.</p>
+          </div>
+          <div style="width: 30%; min-width: 250px; margin-bottom: 20px;">
+            <h4 style="color: #004d99;">Social Responsibility</h4>
+            <p>Committing to programs that promote the welfare of the community, environment, and society at large, reinforcing our role as a driver of positive change.</p>
+          </div>
+        </div>
+      </div>
+
+      <div style="display: inline-block; background-color: #004d99; color: white; padding: 15px 30px; border-radius: 30px; margin-bottom: 20px; font-size: 1.2em;">
+        <a href="https://www.dbp.ph/dbp-transparency-seal-2/corporate-governance/" style="color: white; text-decoration: none; display: flex; align-items: center;" target="_blank">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 10px;"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg>
+          DBP Corporate Governance Portal
+        </a>
+      </div>
+      <div class="page-nav">
+        <button class="nav-btn" id="prev-btn">Previous</button>
+        <button class="nav-btn" id="next-btn">Next</button>
+      </div>
+    </section>
+
+    <!-- Branches and Offices Section -->
+    <section id="branches">
+      <h2>Branches and Offices</h2>
+      <p>The Development Bank of the Philippines (DBP) has a wide network of branches and offices strategically located across the country, ensuring that it can serve clients in both urban and rural areas. With a focus on promoting national development, DBP's branches are dedicated to providing financial services that support infrastructure, agriculture, housing, and other key sectors.</p>
+      
+      <div style="background-color: #004d99; color: white; padding: 15px; border-radius: 5px; margin: 20px 0;">
+        <h3 style="color: white; margin-bottom: 10px;">Head Office:</h3>
+        <p>DBP Building, Sen. Gil J. Puyat Avenue, Makati City, Philippines</p>
+      </div>
+      
+      <p>In addition to the head office in Makati, DBP has several regional branches and satellite offices across the Philippines, allowing it to provide accessible financial solutions to a wide range of customers. These branches are equipped with the resources to assist in financing development projects, managing investments, and supporting local businesses and communities.</p>
+      
+      <h3 style="margin-top: 30px; color: #004d99;">Some Key Branch Locations:</h3>
+      
+      <div class="branch-locations" style="display: flex; flex-wrap: wrap; gap: 20px; margin-top: 20px;">
+        <div style="flex: 1; min-width: 250px; background-color: #f0f7ff; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+          <h4 style="color: #004d99; border-bottom: 2px solid #004d99; padding-bottom: 10px; margin-bottom: 15px;">Metro Manila Branches</h4>
+          <p>Serving the National Capital Region with multiple branches for enhanced accessibility.</p>
+        </div>
+        
+        <div style="flex: 1; min-width: 250px; background-color: #f0f7ff; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+          <h4 style="color: #004d99; border-bottom: 2px solid #004d99; padding-bottom: 10px; margin-bottom: 15px;">Luzon Branches</h4>
+          <p>Located in key cities like Baguio, Batangas, and Pampanga to cater to the Luzon region.</p>
+        </div>
+        
+        <div style="flex: 1; min-width: 250px; background-color: #f0f7ff; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+          <h4 style="color: #004d99; border-bottom: 2px solid #004d99; padding-bottom: 10px; margin-bottom: 15px;">Visayas Branches</h4>
+          <p>Found in cities such as Cebu, Iloilo, and Bacolod, focusing on promoting growth in the central Philippines.</p>
+        </div>
+        
+        <div style="flex: 1; min-width: 250px; background-color: #f0f7ff; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+          <h4 style="color: #004d99; border-bottom: 2px solid #004d99; padding-bottom: 10px; margin-bottom: 15px;">Mindanao Branches</h4>
+          <p>Strategically placed in Davao, Cagayan de Oro, and Zamboanga to support economic development in the southern Philippines.</p>
+        </div>
+      </div>
+      
+      <div style="margin-top: 30px;">
+        <h3 style="color: #004d99;">Regional Offices:</h3>
+        <p>DBP operates regional offices in various parts of the country that handle specific regional needs, providing support for development projects, lending services, and facilitating community-oriented programs.</p>
+      </div>
+      
+      <div style="margin-top: 30px;">
+        <h3 style="color: #004d99;">Representative Offices:</h3>
+        <p>For easier access to financial services, DBP also maintains several representative offices that provide customer support and banking services, often specializing in specific local requirements or government projects.</p>
+      </div>
+      
+      <div style="margin-top: 30px; background-color: #f9f9f9; padding: 20px; border-left: 5px solid #004d99;">
+        <p>This network of branches and offices enables DBP to meet the diverse needs of its customers and extend its services to promote economic growth and development in all regions of the Philippines.</p>
+      </div>
+      <div class="page-nav">
+        <button class="nav-btn" id="prev-btn">Previous</button>
+        <button class="nav-btn" id="next-btn">Next</button>
+      </div>
+    </section>
+
+    <!-- Business Scope Section -->
+    <section id="business-scope">
+      <h2>Scope of Business/Operation</h2>
+      <p>The Development Bank of the Philippines (DBP) operates as a government-owned development financial institution with a nationwide reach and a broad mandate to support and finance projects that contribute to the country's sustainable economic growth.</p>
+      
+      <div style="background-color: #004d99; color: white; padding: 20px; border-radius: 8px; margin: 25px 0;">
+        <h3 style="color: white; margin-bottom: 15px;">National Scope</h3>
+        <p>DBP operates throughout the Philippines, with a strong presence across Luzon, Visayas, and Mindanao. Its network of branches and regional offices enables it to provide accessible banking and financing services to individuals, businesses, and government entities in both urban and rural areas.</p>
+      </div>
+      
+      <div class="scope-container" style="margin-top: 30px;">
+        <h3 style="color: #004d99; border-bottom: 2px solid #004d99; padding-bottom: 10px;">Core Areas of Operation</h3>
+        
+        <div style="margin-top: 20px;">
+          <h4 style="color: #004d99; margin-bottom: 15px;">Development Financing</h4>
+          <ul style="list-style-type: none; padding-left: 0;">
+            <li style="margin-bottom: 10px; padding-left: 20px; position: relative; border-left: 3px solid #004d99; padding-left: 15px;">
+              <p>Infrastructure (roads, bridges, transportation, water supply, etc.)</p>
+            </li>
+            <li style="margin-bottom: 10px; padding-left: 20px; position: relative; border-left: 3px solid #004d99; padding-left: 15px;">
+              <p>Energy (including renewable energy projects)</p>
+            </li>
+            <li style="margin-bottom: 10px; padding-left: 20px; position: relative; border-left: 3px solid #004d99; padding-left: 15px;">
+              <p>Social services (healthcare, education, housing)</p>
+            </li>
+            <li style="margin-bottom: 10px; padding-left: 20px; position: relative; border-left: 3px solid #004d99; padding-left: 15px;">
+              <p>Environmental protection and climate-resilient projects</p>
+            </li>
+          </ul>
+        </div>
+        
+        <div style="margin-top: 30px;">
+          <h4 style="color: #004d99; margin-bottom: 15px;">Support for Key Sectors</h4>
+          <div style="display: flex; flex-wrap: wrap; gap: 20px;">
+            <div style="flex: 1; min-width: 300px; background-color: #f0f7ff; padding: 15px; border-radius: 8px; margin-bottom: 15px;">
+              <h5 style="color: #004d99; margin-bottom: 10px;">Agriculture and Fisheries</h5>
+              <p>Financing for farmers, agri-businesses, irrigation, post-harvest facilities</p>
+            </div>
+            <div style="flex: 1; min-width: 300px; background-color: #f0f7ff; padding: 15px; border-radius: 8px; margin-bottom: 15px;">
+              <h5 style="color: #004d99; margin-bottom: 10px;">Micro, Small, and Medium Enterprises (MSMEs)</h5>
+              <p>Business loans, capacity-building programs</p>
+            </div>
+            <div style="flex: 1; min-width: 300px; background-color: #f0f7ff; padding: 15px; border-radius: 8px; margin-bottom: 15px;">
+              <h5 style="color: #004d99; margin-bottom: 10px;">Public Utilities and Local Government Units (LGUs)</h5>
+              <p>Support for community development projects</p>
+            </div>
+          </div>
+        </div>
+        
+        <div style="margin-top: 30px;">
+          <h4 style="color: #004d99; margin-bottom: 15px;">Public-Private Partnerships (PPP)</h4>
+          <p>DBP actively participates in financing and supporting PPP projects that boost infrastructure and service delivery.</p>
+        </div>
+        
+        <div style="margin-top: 30px;">
+          <h4 style="color: #004d99; margin-bottom: 15px;">Green Banking and Sustainability Projects</h4>
+          <p>Focused on financing initiatives that promote environmental sustainability, renewable energy, and climate change mitigation.</p>
+        </div>
+        
+        <div style="margin-top: 30px;">
+          <h4 style="color: #004d99; margin-bottom: 15px;">Investment and Asset Management</h4>
+          <p>Management of investments, leasing, and insurance through its subsidiaries</p>
+        </div>
+        
+        <div style="margin-top: 30px;">
+          <h4 style="color: #004d99; margin-bottom: 15px;">Retail and Corporate Banking Services</h4>
+          <p>Offering deposit accounts, loan products, credit facilities, and other banking solutions to individuals, businesses, and institutions.</p>
+        </div>
+      </div>
+      
+      <div style="margin-top: 30px; background-color: #f5f5f5; padding: 20px; border-radius: 8px;">
+        <h3 style="color: #004d99; margin-bottom: 15px;">Client Base</h3>
+        <ul style="list-style-type: none; padding-left: 0; columns: 2; column-gap: 40px;">
+          <li style="margin-bottom: 10px; padding-left: 20px; position: relative;">
+            <span style="color: #004d99; font-weight: bold; margin-right: 5px;">•</span> National and local government units (LGUs)
+          </li>
+          <li style="margin-bottom: 10px; padding-left: 20px; position: relative;">
+            <span style="color: #004d99; font-weight: bold; margin-right: 5px;">•</span> Private corporations and SMEs
+          </li>
+          <li style="margin-bottom: 10px; padding-left: 20px; position: relative;">
+            <span style="color: #004d99; font-weight: bold; margin-right: 5px;">•</span> Cooperatives and rural banks
+          </li>
+          <li style="margin-bottom: 10px; padding-left: 20px; position: relative;">
+            <span style="color: #004d99; font-weight: bold; margin-right: 5px;">•</span> Non-government organizations (NGOs)
+          </li>
+          <li style="margin-bottom: 10px; padding-left: 20px; position: relative;">
+            <span style="color: #004d99; font-weight: bold; margin-right: 5px;">•</span> Individual entrepreneurs and professionals
+          </li>
+        </ul>
+      </div>
+      <div class="page-nav">
+        <button class="nav-btn" id="prev-btn">Previous</button>
+        <button class="nav-btn" id="next-btn">Next</button>
+      </div>
+    </section>
+
+    <!-- Products and Services Section -->
+    <section id="products-services">
+      <h2>Products and Services</h2>
+      <p>The Development Bank of the Philippines (DBP) provides a wide range of developmental, financial, and banking services that cater to various sectors, including infrastructure, agriculture, MSMEs, environment, and government projects. Here's a categorized list of its key products and services:</p>
+      
+      <!-- Loan and Financing Programs -->
+      <div class="product-category" style="margin-top: 30px;">
+        <h3 style="color: #004d99; background-color: #f0f7ff; padding: 15px; border-radius: 5px;">1. Loan and Financing Programs</h3>
+        
+        <div style="margin: 25px 0 25px 20px;">
+          <div style="margin-bottom: 25px; border-left: 4px solid #004d99; padding-left: 20px;">
+            <h4 style="color: #004d99; margin-bottom: 10px;">a. Infrastructure and Logistics Support</h4>
+            <ul style="padding-left: 20px;">
+              <li>Financing for roads, bridges, airports, seaports, water systems, and other public infrastructure</li>
+              <li>Support for transport, logistics, and utility providers</li>
+            </ul>
+          </div>
+          
+          <div style="margin-bottom: 25px; border-left: 4px solid #004d99; padding-left: 20px;">
+            <h4 style="color: #004d99; margin-bottom: 10px;">b. Agriculture and Agribusiness</h4>
+            <ul style="padding-left: 20px;">
+              <li>Loans for farmers, cooperatives, agribusinesses</li>
+              <li>Financing for farm equipment, irrigation systems, and post-harvest facilities</li>
+            </ul>
+          </div>
+          
+          <div style="margin-bottom: 25px; border-left: 4px solid #004d99; padding-left: 20px;">
+            <h4 style="color: #004d99; margin-bottom: 10px;">c. Micro, Small, and Medium Enterprises (MSMEs)</h4>
+            <ul style="padding-left: 20px;">
+              <li>Business loans and credit lines for start-ups and growing enterprises</li>
+              <li>MSME support programs in partnership with government agencies</li>
+            </ul>
+          </div>
+          
+          <div style="margin-bottom: 25px; border-left: 4px solid #004d99; padding-left: 20px;">
+            <h4 style="color: #004d99; margin-bottom: 10px;">d. Environmental and Climate Projects</h4>
+            <ul style="padding-left: 20px;">
+              <li>Financing for renewable energy (solar, wind, hydro)</li>
+              <li>Green financing programs for sustainable water, waste, and energy projects</li>
+            </ul>
+          </div>
+          
+          <div style="margin-bottom: 25px; border-left: 4px solid #004d99; padding-left: 20px;">
+            <h4 style="color: #004d99; margin-bottom: 10px;">e. Local Government Unit (LGU) Financing</h4>
+            <ul style="padding-left: 20px;">
+              <li>Loans to fund infrastructure, social services, and economic development projects of LGUs</li>
+            </ul>
+          </div>
+          
+          <div style="margin-bottom: 25px; border-left: 4px solid #004d99; padding-left: 20px;">
+            <h4 style="color: #004d99; margin-bottom: 10px;">f. Social Infrastructure</h4>
+            <ul style="padding-left: 20px;">
+              <li>Education and healthcare infrastructure support</li>
+              <li>Affordable housing and public housing development loans</li>
+            </ul>
+          </div>
+          
+          <div style="margin-bottom: 25px; border-left: 4px solid #004d99; padding-left: 20px;">
+            <h4 style="color: #004d99; margin-bottom: 10px;">g. Public-Private Partnership (PPP) Financing</h4>
+            <ul style="padding-left: 20px;">
+              <li>Structured loans and advisory services for PPP infrastructure projects</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Other Services -->
+      <div style="display: flex; flex-wrap: wrap; gap: 25px; margin-top: 30px;">
+        <!-- Deposit and Banking Services -->
+        <div style="flex: 1; min-width: 300px; background-color: #f9f9f9; padding: 25px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
+          <h3 style="color: #004d99; border-bottom: 2px solid #004d99; padding-bottom: 10px; margin-bottom: 20px;">2. Deposit and Banking Services</h3>
+          <ul style="padding-left: 20px;">
+            <li>Current and Savings Accounts</li>
+            <li>Time Deposits</li>
+            <li>Government Depository Services</li>
+            <li>Payroll and Disbursement Services</li>
+            <li>Online and Mobile Banking Access</li>
+          </ul>
+        </div>
+        
+        <!-- Investment and Treasury Services -->
+        <div style="flex: 1; min-width: 300px; background-color: #f9f9f9; padding: 25px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
+          <h3 style="color: #004d99; border-bottom: 2px solid #004d99; padding-bottom: 10px; margin-bottom: 20px;">3. Investment and Treasury Services</h3>
+          <ul style="padding-left: 20px;">
+            <li>Government Securities and Bonds Investment</li>
+            <li>Corporate and Retail Investment Products</li>
+            <li>Treasury Bills and Market Trading Services</li>
+          </ul>
+        </div>
+      </div>
+      
+      <div style="display: flex; flex-wrap: wrap; gap: 25px; margin-top: 25px;">
+        <!-- Specialized Services -->
+        <div style="flex: 1; min-width: 300px; background-color: #f9f9f9; padding: 25px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
+          <h3 style="color: #004d99; border-bottom: 2px solid #004d99; padding-bottom: 10px; margin-bottom: 20px;">4. Specialized Services</h3>
+          <ul style="padding-left: 20px;">
+            <li>Leasing and Financing Services (via DBP Leasing Corporation)</li>
+            <li>Insurance Brokerage Services (via DBP Insurance Brokerage, Inc.)</li>
+            <li>Data and IT Solutions (via DBP Data Center Inc.)</li>
+            <li>Asset Management Services (via DBP Management Corporation)</li>
+          </ul>
+        </div>
+        
+        <!-- Development Programs -->
+        <div style="flex: 1; min-width: 300px; background-color: #f9f9f9; padding: 25px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
+          <h3 style="color: #004d99; border-bottom: 2px solid #004d99; padding-bottom: 10px; margin-bottom: 20px;">5. Development Programs and Technical Assistance</h3>
+          <ul style="padding-left: 20px;">
+            <li>Project Development Support</li>
+            <li>Capacity-Building Programs for LGUs and MSMEs</li>
+            <li>Advisory Services for Green and Sustainable Projects</li>
+          </ul>
+        </div>
+      </div>
+
+      <div style="display: inline-block; background-color: #004d99; color: white; padding: 15px 30px; border-radius: 30px; margin-bottom: 20px; font-size: 1.2em;">
+        <a href="https://www.dbp.ph/dbp-transparency-seal-2/corporate-governance/" style="color: white; text-decoration: none; display: flex; align-items: center;" target="_blank">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 10px;"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5.5 5.5 0 0 0 7.07 7.07l1.71-1.71"></path></svg>
+          DBP Corporate Governance Portal
+        </a>
+      </div>
+      <div class="page-nav">
+        <button class="nav-btn" id="prev-btn">Previous</button>
+        <button class="nav-btn" id="next-btn">Next</button>
+      </div>
+    </section>
+
+    <!-- Financial Highlights Section -->
+    <section id="financial-highlights">
+      <h2>Operational/Financial Highlights</h2>
+      <p>The Development Bank of the Philippines (DBP) consistently delivers strong operational and financial performance, reflecting its commitment to sustainable development, inclusive financing, and national economic growth. Below are some general highlights typically reported by DBP. (Note: For actual figures, refer to the bank's latest annual report or official press releases.)</p>
+      
+      <!-- Operational Highlights -->
+      <div style="margin-top: 30px;">
+        <h3 style="color: white; background-color: #004d99; padding: 15px; border-radius: 8px;">Operational Highlights</h3>
+        
+        <div style="display: flex; flex-wrap: wrap; gap: 20px; margin-top: 25px;">
+          <!-- Nationwide Reach -->
+          <div style="flex: 1; min-width: 250px; background-color: #f0f7ff; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+            <h4 style="color: #004d99; border-bottom: 2px solid #004d99; padding-bottom: 10px; margin-bottom: 15px;">Nationwide Reach</h4>
+            <p>Over 130 branches and offices across the Philippines, enabling service delivery to remote and underserved areas.</p>
+          </div>
+          
+          <!-- Digital Transformation -->
+          <div style="flex: 1; min-width: 250px; background-color: #f0f7ff; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+            <h4 style="color: #004d99; border-bottom: 2px solid #004d99; padding-bottom: 10px; margin-bottom: 15px;">Digital Transformation</h4>
+            <p>Investments in digital platforms and online banking services for enhanced customer convenience and operational efficiency.</p>
+          </div>
+          
+          <!-- PPP Engagement -->
+          <div style="flex: 1; min-width: 250px; background-color: #f0f7ff; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+            <h4 style="color: #004d99; border-bottom: 2px solid #004d99; padding-bottom: 10px; margin-bottom: 15px;">Public-Private Partnership Engagement</h4>
+            <p>Financing and advisory services extended to several PPP initiatives nationwide, contributing to key infrastructure development.</p>
+          </div>
+        </div>
+        
+        <!-- Priority Sector Support -->
+        <div style="margin-top: 25px; background-color: #f0f7ff; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+          <h4 style="color: #004d99; border-bottom: 2px solid #004d99; padding-bottom: 10px; margin-bottom: 15px;">Priority Sector Support</h4>
+          <p>Significant loan portfolio dedicated to:</p>
+          <div style="display: flex; flex-wrap: wrap; margin-top: 15px;">
+            <div style="flex: 1; min-width: 200px; padding: 10px;">
+              <div style="background-color: #e6f0ff; padding: 15px; border-radius: 5px; text-align: center;">
+                <span style="color: #004d99; font-weight: bold;">Infrastructure & Logistics</span>
+              </div>
+            </div>
+            <div style="flex: 1; min-width: 200px; padding: 10px;">
+              <div style="background-color: #e6f0ff; padding: 15px; border-radius: 5px; text-align: center;">
+                <span style="color: #004d99; font-weight: bold;">Agriculture & Agribusiness</span>
+              </div>
+            </div>
+            <div style="flex: 1; min-width: 200px; padding: 10px;">
+              <div style="background-color: #e6f0ff; padding: 15px; border-radius: 5px; text-align: center;">
+                <span style="color: #004d99; font-weight: bold;">MSMEs</span>
+              </div>
+            </div>
+            <div style="flex: 1; min-width: 200px; padding: 10px;">
+              <div style="background-color: #e6f0ff; padding: 15px; border-radius: 5px; text-align: center;">
+                <span style="color: #004d99; font-weight: bold;">Environment & Climate Change</span>
+              </div>
+            </div>
+            <div style="flex: 1; min-width: 200px; padding: 10px;">
+              <div style="background-color: #e6f0ff; padding: 15px; border-radius: 5px; text-align: center;">
+                <span style="color: #004d99; font-weight: bold;">Education and Healthcare</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Financial Highlights -->
+      <div style="margin-top: 40px;">
+        <h3 style="color: white; background-color: #004d99; padding: 15px; border-radius: 8px;">Financial Highlights (Sample Figures from Previous Reporting Periods)</h3>
+        
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; margin-top: 25px;">
+          <!-- Total Assets -->
+          <div style="background-color: #f9f9f9; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+            <h4 style="color: #004d99; margin-bottom: 15px;">Total Assets</h4>
+            <p style="font-size: 1.2em;">Over <span style="color: #004d99; font-weight: bold; font-size: 1.2em;">₱1 trillion</span></p>
+            <p>Making DBP one of the largest government financial institutions in the country.</p>
+          </div>
+          
+          <!-- Loan Portfolio -->
+          <div style="background-color: #f9f9f9; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+            <h4 style="color: #004d99; margin-bottom: 15px;">Loan Portfolio</h4>
+            <p style="font-size: 1.2em;">Exceeding <span style="color: #004d99; font-weight: bold; font-size: 1.2em;">₱500 billion</span></p>
+            <p>With a focus on development-oriented sectors.</p>
+          </div>
+          
+          <!-- Net Income -->
+          <div style="background-color: #f9f9f9; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+            <h4 style="color: #004d99; margin-bottom: 15px;">Net Income</h4>
+            <p style="font-size: 1.2em;">Annual range: <span style="color: #004d99; font-weight: bold; font-size: 1.2em;">₱4 to ₱6 billion</span></p>
+            <p>Depending on economic conditions and portfolio growth.</p>
+          </div>
+          
+          <!-- Capital Adequacy Ratio -->
+          <div style="background-color: #f9f9f9; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+            <h4 style="color: #004d99; margin-bottom: 15px;">Capital Adequacy Ratio (CAR)</h4>
+            <p>Maintained above the regulatory requirement, ensuring financial strength and stability.</p>
+          </div>
+          
+          <!-- Return on Equity -->
+          <div style="background-color: #f9f9f9; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+            <h4 style="color: #004d99; margin-bottom: 15px;">Return on Equity (ROE)</h4>
+            <p>Positive ROE indicating efficient use of equity capital in generating earnings.</p>
+          </div>
+          
+          <!-- NPL Ratio -->
+          <div style="background-color: #f9f9f9; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+            <h4 style="color: #004d99; margin-bottom: 15px;">Non-Performing Loan (NPL) Ratio</h4>
+            <p>Managed below industry averages, showing effective credit risk management.</p>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Notable Achievements -->
+      <div style="margin-top: 40px; background-color: #f0f7ff; padding: 25px; border-radius: 8px; border-left: 5px solid #004d99;">
+        <h3 style="color: #004d99; margin-bottom: 15px;">Notable Achievements</h3>
+        <ul style="padding-left: 20px;">
+          <li style="margin-bottom: 10px;">Recognized for promoting green financing and sustainable development goals (SDGs).</li>
+          <li style="margin-bottom: 10px;">Active contributor to the Build, Build, Build program and other government initiatives.</li>
+          <li style="margin-bottom: 10px;">Played a vital role in pandemic recovery financing, including loans for healthcare and social welfare support.</li>
+        </ul>
+      </div>
+      <div class="page-nav">
+        <button class="nav-btn" id="prev-btn">Previous</button>
+        <button class="nav-btn" id="next-btn">Next</button>
+      </div>
+    </section>
+
+    <!-- Awards Section -->
+    <section id="awards">
+      <h2>Awards and Recognitions</h2>
+      <p>The Development Bank of the Philippines (DBP) has garnered several awards and recognitions over the past five years, reflecting its commitment to sustainable development, financial excellence, and public service. Below is a summary of notable accolades:</p>
+      
+      <!-- 2024 Awards -->
+      <div style="margin-top: 30px;">
+        <div style="background-color: #004d99; color: white; padding: 12px 20px; border-radius: 30px; display: inline-block; font-size: 1.2em; margin-bottom: 20px;">
+          <strong>2024</strong>
+        </div>
+        
+        <div style="display: flex; flex-wrap: wrap; gap: 20px;">
+          <!-- Award 1 -->
+          <div style="flex: 1; min-width: 300px; background-color: #f0f7ff; padding: 25px; border-radius: 8px; box-shadow: 0 3px 6px rgba(0,0,0,0.1); margin-bottom: 15px; border-top: 5px solid #004d99;">
+            <h4 style="color: #004d99; margin-bottom: 10px;">Top Performing Government Securities Eligible Dealer (GSED)</h4>
+            <p style="color: #666; margin-bottom: 15px; font-style: italic;">Awarded by the Bureau of the Treasury</p>
+            <p>DBP was recognized as one of the top-performing GSEDs, highlighting its active participation and performance in the government securities market.</p>
+          </div>
+          
+          <!-- Award 2 -->
+          <div style="flex: 1; min-width: 300px; background-color: #f0f7ff; padding: 25px; border-radius: 8px; box-shadow: 0 3px 6px rgba(0,0,0,0.1); margin-bottom: 15px; border-top: 5px solid #004d99;">
+            <h4 style="color: #004d99; margin-bottom: 10px;">Green Initiatives Award</h4>
+            <p style="color: #666; margin-bottom: 15px; font-style: italic;">International Recognition</p>
+            <p>DBP received an international award for its commitment to sustainability, particularly for its environmental management systems and green financing initiatives.</p>
+          </div>
+          
+          <!-- Award 3 -->
+          <div style="flex: 1; min-width: 300px; background-color: #f0f7ff; padding: 25px; border-radius: 8px; box-shadow: 0 3px 6px rgba(0,0,0,0.1); margin-bottom: 15px; border-top: 5px solid #004d99;">
+            <h4 style="color: #004d99; margin-bottom: 10px;">Award for NAIA Modernization Project</h4>
+            <p style="color: #666; margin-bottom: 15px; font-style: italic;">International Recognition</p>
+            <p>The bank was honored for its role in financing the modernization of the Ninoy Aquino International Airport (NAIA), showcasing its support for infrastructure development.</p>
+          </div>
+        </div>
+      </div>
+      
+      <!-- 2021-2023 Awards -->
+      <div style="margin-top: 40px;">
+        <div style="background-color: #004d99; color: white; padding: 12px 20px; border-radius: 30px; display: inline-block; font-size: 1.2em; margin-bottom: 20px;">
+          <strong>2021–2023</strong>
+        </div>
+        
+        <div style="display: flex; flex-wrap: wrap; gap: 20px;">
+          <!-- Award 1 -->
+          <div style="flex: 1; min-width: 300px; background-color: #f0f7ff; padding: 25px; border-radius: 8px; box-shadow: 0 3px 6px rgba(0,0,0,0.1); margin-bottom: 15px; border-top: 5px solid #004d99;">
+            <h4 style="color: #004d99; margin-bottom: 10px;">Special Recognition for Consistently High Corporate Governance Scorecard (CGS) Ratings</h4>
+            <p style="color: #666; margin-bottom: 15px; font-style: italic;">Awarded by relevant oversight bodies (2021–2023)</p>
+            <p>DBP was acknowledged for maintaining high CGS ratings over three consecutive years, reflecting its adherence to good corporate governance practices.</p>
+          </div>
+          
+          <!-- Award 2 -->
+          <div style="flex: 1; min-width: 300px; background-color: #f0f7ff; padding: 25px; border-radius: 8px; box-shadow: 0 3px 6px rgba(0,0,0,0.1); margin-bottom: 15px; border-top: 5px solid #004d99;">
+            <h4 style="color: #004d99; margin-bottom: 10px;">GOCCs for Sustainability Award</h4>
+            <p style="color: #666; margin-bottom: 15px; font-style: italic;">Awarded by relevant oversight bodies</p>
+            <p>The bank received this award for its sustainable practices and contributions to environmental and social development.</p>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Reference Note -->
+      <div style="margin-top: 40px; background-color: #f5f5f5; padding: 20px; border-radius: 8px; border-left: 5px solid #004d99;">
+        <p style="margin-bottom: 0;"><strong>Note:</strong> For a comprehensive list of awards and recognitions, please refer to <a href="https://www.dbp.ph/about-dbp/awards-and-citations/" style="color: #004d99; text-decoration: none; font-weight: bold;">DBP's official Awards and Citations page</a>.</p>
+      </div>
+      <div class="page-nav">
+        <button class="nav-btn" id="prev-btn">Previous</button>
+        <button class="nav-btn" id="next-btn">Next</button>
+      </div>
+    </section>
+
+    <!-- Organizational Structure Section -->
+    <section id="structure">
+      <h2>Organizational Structure</h2>
+      <p>The Development Bank of the Philippines (DBP) follows a corporate organizational structure designed to ensure effective leadership, accountability, and efficient operations across its nationwide network. The structure reflects its mandate as a government financial institution focused on developmental banking.</p>
+      
+      <!-- Visual Org Chart -->
+      <div class="org-chart" style="margin: 40px 0; text-align: center;">
+        <div style="background-color: #004d99; color: white; padding: 15px; border-radius: 8px; display: inline-block; margin-bottom: 20px; min-width: 300px;">
+          <h3 style="margin: 0; color: white;">Board of Directors</h3>
+        </div>
+        <div style="border-left: 2px solid #004d99; height: 30px; margin: 0 auto;"></div>
+        <div style="background-color: #0066cc; color: white; padding: 15px; border-radius: 8px; display: inline-block; margin-bottom: 20px; min-width: 300px;">
+          <h3 style="margin: 0; color: white;">President and CEO</h3>
+        </div>
+        
+        <!-- Executive Leadership -->
+        <div style="border-left: 2px solid #004d99; height: 30px; margin: 0 auto;"></div>
+        <div style="display: flex; justify-content: center; flex-wrap: wrap; gap: 20px; margin-bottom: 30px;">
+          <div style="background-color: #3385d6; color: white; padding: 12px; border-radius: 8px; width: 200px;">
+            <h4 style="margin: 0; font-size: 0.95em; color: white;">Corporate Services Sector</h4>
+          </div>
+          <div style="background-color: #3385d6; color: white; padding: 12px; border-radius: 8px; width: 200px;">
+            <h4 style="margin: 0; font-size: 0.95em; color: white;">Lending and Credit Sector</h4>
+          </div>
+          <div style="background-color: #3385d6; color: white; padding: 12px; border-radius: 8px; width: 200px;">
+            <h4 style="margin: 0; font-size: 0.95em; color: white;">Treasury and Investment Sector</h4>
+          </div>
+          <div style="background-color: #3385d6; color: white; padding: 12px; border-radius: 8px; width: 200px;">
+            <h4 style="margin: 0; font-size: 0.95em; color: white;">Branch Banking Sector</h4>
+          </div>
+        </div>
+        
+        <!-- Departments -->
+        <div style="border-left: 2px solid #004d99; height: 30px; margin: 0 auto;"></div>
+        <div style="background-color: #66a3e0; color: white; padding: 12px; border-radius: 8px; display: inline-block; margin-bottom: 20px;">
+          <h4 style="margin: 0; color: white;">Departments, Divisions, and Regional Operations</h4>
+        </div>
+        
+        <!-- Branches -->
+        <div style="border-left: 2px solid #004d99; height: 30px; margin: 0 auto;"></div>
+        <div style="display: flex; justify-content: center; flex-wrap: wrap; gap: 15px;">
+          <div style="background-color: #99c2eb; color: #333; padding: 10px; border-radius: 8px; width: 150px;">
+            <h5 style="margin: 0; font-size: 0.9em;">Luzon Branches</h5>
+          </div>
+          <div style="background-color: #99c2eb; color: #333; padding: 10px; border-radius: 8px; width: 150px;">
+            <h5 style="margin: 0; font-size: 0.9em;">Visayas Branches</h5>
+          </div>
+          <div style="background-color: #99c2eb; color: #333; padding: 10px; border-radius: 8px; width: 150px;">
+            <h5 style="margin: 0; font-size: 0.9em;">Mindanao Branches</h5>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Detailed Descriptions -->
+      <div class="org-details">
+        <!-- Board of Directors -->
+        <div style="margin-bottom: 30px;">
+          <h3 style="color: #004d99; border-bottom: 2px solid #004d99; padding-bottom: 10px;">1. Board of Directors</h3>
+          <p>The Board of Directors is the highest policy-making body in DBP. It provides oversight and strategic direction to ensure that the bank fulfills its mission and operates in accordance with government laws and regulations.</p>
+          
+          <ul style="list-style-type: none; padding-left: 20px;">
+            <li style="margin-bottom: 8px; padding-left: 15px; border-left: 3px solid #004d99;">Chairperson of the Board</li>
+            <li style="margin-bottom: 8px; padding-left: 15px; border-left: 3px solid #004d99;">President and Chief Executive Officer (CEO)</li>
+            <li style="margin-bottom: 8px; padding-left: 15px; border-left: 3px solid #004d99;">Independent Directors</li>
+            <li style="margin-bottom: 8px; padding-left: 15px; border-left: 3px solid #004d99;">Ex-Officio Members (e.g., from Department of Finance, NEDA, etc.)</li>
+          </ul>
+        </div>
+        
+        <!-- Executive Leadership -->
+        <div style="margin-bottom: 30px;">
+          <h3 style="color: #004d99; border-bottom: 2px solid #004d99; padding-bottom: 10px;">2. Executive Leadership</h3>
+          
+          <div style="margin: 15px 0 20px 0;">
+            <h4 style="color: #004d99; margin-bottom: 5px;">President and Chief Executive Officer (CEO)</h4>
+            <p>The top executive responsible for overall management and direction of DBP's operations.</p>
+          </div>
+          
+          <h4 style="color: #004d99; margin-bottom: 15px;">Executive Vice Presidents (EVPs)</h4>
+          <p>Heads of major operational groups or sectors within the bank, such as:</p>
+          
+          <ul style="list-style-type: none; padding-left: 20px;">
+            <li style="margin-bottom: 8px; padding-left: 15px; border-left: 3px solid #3385d6;">Corporate Services Sector</li>
+            <li style="margin-bottom: 8px; padding-left: 15px; border-left: 3px solid #3385d6;">Lending and Credit Sector</li>
+            <li style="margin-bottom: 8px; padding-left: 15px; border-left: 3px solid #3385d6;">Treasury and Investment Sector</li>
+            <li style="margin-bottom: 8px; padding-left: 15px; border-left: 3px solid #3385d6;">Branch Banking Sector</li>
+          </ul>
+        </div>
+        
+        <!-- Senior Management -->
+        <div style="margin-bottom: 30px;">
+          <h3 style="color: #004d99; border-bottom: 2px solid #004d99; padding-bottom: 10px;">3. Senior Management</h3>
+          <h4 style="color: #004d99; margin-bottom: 15px;">Senior Vice Presidents (SVPs) / Vice Presidents (VPs)</h4>
+          <p>Lead functional departments such as:</p>
+          
+          <div style="display: flex; flex-wrap: wrap; gap: 10px; margin-top: 15px;">
+            <div style="background-color: #f0f7ff; padding: 10px; border-radius: 5px; flex: 1; min-width: 160px; text-align: center;">Legal Services</div>
+            <div style="background-color: #f0f7ff; padding: 10px; border-radius: 5px; flex: 1; min-width: 160px; text-align: center;">Risk Management</div>
+            <div style="background-color: #f0f7ff; padding: 10px; border-radius: 5px; flex: 1; min-width: 160px; text-align: center;">Information Technology</div>
+            <div style="background-color: #f0f7ff; padding: 10px; border-radius: 5px; flex: 1; min-width: 160px; text-align: center;">Human Resource Management</div>
+            <div style="background-color: #f0f7ff; padding: 10px; border-radius: 5px; flex: 1; min-width: 160px; text-align: center;">Corporate Communications</div>
+            <div style="background-color: #f0f7ff; padding: 10px; border-radius: 5px; flex: 1; min-width: 160px; text-align: center;">Compliance and Audit</div>
+            <div style="background-color: #f0f7ff; padding: 10px; border-radius: 5px; flex: 1; min-width: 160px; text-align: center;">Environmental and Social Management</div>
+          </div>
+        </div>
+        
+        <!-- Department and Division Heads -->
+        <div style="margin-bottom: 30px;">
+          <h3 style="color: #004d99; border-bottom: 2px solid #004d99; padding-bottom: 10px;">4. Department and Division Heads</h3>
+          <p>Each department or division is headed by a Department Manager or Division Head, who is responsible for supervising daily operations and ensuring the implementation of policies and projects aligned with DBP's goals.</p>
+        </div>
+        
+        <!-- Regional and Branch Operations -->
+        <div style="margin-bottom: 30px;">
+          <h3 style="color: #004d99; border-bottom: 2px solid #004d99; padding-bottom: 10px;">5. Regional and Branch Operations</h3>
+          
+          <div style="margin: 15px 0 20px 0;">
+            <h4 style="color: #004d99; margin-bottom: 5px;">Regional Heads</h4>
+            <p>Oversee DBP operations in specific geographic areas (Luzon, Visayas, Mindanao).</p>
+          </div>
+          
+          <div style="margin: 15px 0 20px 0;">
+            <h4 style="color: #004d99; margin-bottom: 5px;">Branch Managers</h4>
+            <p>Supervise activities of local DBP branches, providing banking and financing services to clients in their area.</p>
+          </div>
+        </div>
+        
+        <!-- Subsidiaries -->
+        <div style="margin-bottom: 30px;">
+          <h3 style="color: #004d99; border-bottom: 2px solid #004d99; padding-bottom: 10px;">6. Subsidiaries (with their own management structures)</h3>
+          
+          <div style="display: flex; flex-wrap: wrap; gap: 15px; margin-top: 20px;">
+            <div style="flex: 1; min-width: 220px; background-color: #f0f7ff; padding: 15px; border-radius: 8px; text-align: center; border: 1px solid #cce0ff;">
+              DBP Leasing Corporation
+            </div>
+            <div style="flex: 1; min-width: 220px; background-color: #f0f7ff; padding: 15px; border-radius: 8px; text-align: center; border: 1px solid #cce0ff;">
+              DBP Data Center, Inc.
+            </div>
+            <div style="flex: 1; min-width: 220px; background-color: #f0f7ff; padding: 15px; border-radius: 8px; text-align: center; border: 1px solid #cce0ff;">
+              DBP Insurance Brokerage, Inc.
+            </div>
+            <div style="flex: 1; min-width: 220px; background-color: #f0f7ff; padding: 15px; border-radius: 8px; text-align: center; border: 1px solid #cce0ff;">
+              DBP Management Corporation
+            </div>
+          </div>
+        </div>
+        
+        <p style="margin-top: 20px;">This hierarchical structure enables DBP to maintain strong governance, strategic leadership, and operational efficiency, allowing it to effectively fulfill its developmental banking mandate nationwide.</p>
+      </div>
+      <div class="page-nav">
+        <button class="nav-btn" id="prev-btn">Previous</button>
+        <button class="nav-btn" id="next-btn">Next</button>
+      </div>
+    </section>
+
+    <!-- Board of Directors Section -->
+    <section id="board">
+      <h2>Board of Directors</h2>
+      <p>As of 2024, the Development Bank of the Philippines (DBP) is governed by a Board of Directors composed of experienced professionals from various sectors. The Board is responsible for setting the strategic direction and overseeing the bank's operations in alignment with its developmental mandate.</p>
+      
+      <div class="profile-container">
+        <div class="profile-card">
+          <div class="profile-image">
+            <img src="https://www.ndc.gov.ph/sites/default/files/styles/key_officials_member/public/2024-05/Philip%20G%20lo_0.jpg?itok=4I4I8XA6" alt="Philip G. Lo">
+          </div>
+          <div class="profile-details">
+            <h3>Philip G. Lo</h3>
+            <p>Chairman</p>
+            <p>Appointed by the President of the Philippines, Mr. Lo leads the Board in formulating policies and strategies that guide DBP's role as a development finance institution.</p>
+          </div>
+        </div>
+        
+        <div class="profile-card">
+          <div class="profile-image">
+            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQmKajzN3ZUsaX6mUvdcOW4XadbN_THds3ppQ&s" alt="Michael O. de Jesus">
+          </div>
+          <div class="profile-details">
+            <h3>Michael O. de Jesus</h3>
+            <p>President and Chief Executive Officer (CEO)</p>
+            <p>Serving as the Vice Chairman of the Board, Mr. de Jesus is responsible for the overall management and administration of the bank's operations.</p>
+          </div>
+        </div>
+        
+        <div class="profile-card">
+          <div class="profile-image">
+            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS-3frMHvQBSr2zwjl1dVuAtWuN0QS7ZTKqTQ&s" alt="Roberto V. Antonio">
+          </div>
+          <div class="profile-details">
+            <h3>Roberto V. Antonio</h3>
+            <p>Director</p>
+            <p>Mr. Antonio contributes his expertise to the Board, supporting DBP's initiatives in various sectors.</p>
+          </div>
+        </div>
+        
+        <div class="profile-card">
+          <div class="profile-image">
+            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRAfx-XuQCc6c7UZ-52XCSu7E7s98INZbcK8A&s" alt="Emmeline C. David">
+          </div>
+          <div class="profile-details">
+            <h3>Emmeline C. David</h3>
+            <p>Director</p>
+            <p>Ms. David brings valuable insights to the Board, aiding in the bank's mission to promote sustainable economic growth.</p>
+          </div>
+        </div>
+        
+        <div class="profile-card">
+          <div class="profile-image">
+            <img src="https://media.licdn.com/dms/image/v2/C5603AQHlnP8rkHZjkw/profile-displayphoto-shrink_200_200/profile-displayphoto-shrink_200_200/0/1632121334507?e=2147483647&v=beta&t=1x6ugcszs7W259211IJ9jVvzh4Cr997KXRy_vHt9Mw8" alt="Wilma T. Eisma">
+          </div>
+          <div class="profile-details">
+            <h3>Wilma T. Eisma</h3>
+            <p>Director</p>
+            <p>Ms. Eisma's experience enhances the Board's capacity to oversee DBP's development programs and services.</p>
+          </div>
+        </div>
+        
+        <div class="profile-card">
+          <div class="profile-image">
+            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT-7ILId8XB2eT8X0uaulIpMwl8hqG9XLHCaA&s" alt="Victor Alfonso A. Limlingan">
+          </div>
+          <div class="profile-details">
+            <h3>Victor Alfonso A. Limlingan</h3>
+            <p>Director</p>
+            <p>Mr. Limlingan offers his financial and economic expertise to support the bank's strategic objectives.</p>
+          </div>
+        </div>
+        
+        <div class="profile-card">
+          <div class="profile-image">
+            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRBPLvNQS9Tfyb4neHkLwhMJNV4mb44Mc0nkg&s" alt="Jaime Z. Paz">
+          </div>
+          <div class="profile-details">
+            <h3>Jaime Z. Paz</h3>
+            <p>Director</p>
+            <p>Mr. Paz contributes to the Board's governance, ensuring that DBP's operations align with its developmental goals.</p>
+          </div>
+        </div>
+        
+        <div class="profile-card">
+          <div class="profile-image">
+            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTB3OOJh0JM5fNXQsXbvBHEu0o9vxVQnHi2Ig&s" alt="Eddie Abel C. Dorotan">
+          </div>
+          <div class="profile-details">
+            <h3>Eddie Abel C. Dorotan</h3>
+            <p>Director</p>
+            <p>Appointed in 2024, Mr. Dorotan brings over 20 years of experience in investment banking and capital markets, strengthening the Board's financial acumen.</p>
+          </div>
+        </div>
+      </div>
+      
+      <div style="margin-top: 40px; background-color: #f0f7ff; padding: 25px; border-radius: 8px;">
+        <p>The DBP Board of Directors plays a crucial role in steering the bank towards achieving its vision of being a catalyst for a progressive and prosperous Philippines. Their collective expertise ensures that DBP continues to fulfill its mandate of providing financial services that support national development.</p>
+        
+        <p style="margin-top: 15px;">For more detailed information about the Board members and their profiles, you may visit the <a href="https://www.dbp.ph/about-dbp/board-of-directors-management/" style="color: #004d99; text-decoration: none; font-weight: bold;">official DBP website: DBP Board of Directors</a>.</p>
+      </div>
+      <div class="page-nav">
+        <button class="nav-btn" id="prev-btn">Previous</button>
+        <button class="nav-btn" id="next-btn">Next</button>
+      </div>
+    </section>
+
+    <!-- Management Committee Section -->
+    <section id="management">
+      <h2>Management Committee</h2>
+      <p>The Management Committee (ManCom) of the Development Bank of the Philippines (DBP) is responsible for the strategic and operational management of the bank. Comprising senior executives from various sectors, the ManCom ensures that DBP's activities align with its mission to promote sustainable economic development in the Philippines.</p>
+      
+      <h3 style="color: #004d99; margin-top: 30px; margin-bottom: 20px;">Key Members of the Management Committee</h3>
+      
+      <div class="profile-container">
+        <div class="profile-card">
+          <div class="profile-image">
+            <img src="https://www.dbp.ph/wp-content/uploads/2024/04/PMOJ-Picture.jpg" alt="Michael O. de Jesus">
+          </div>
+          <div class="profile-details">
+            <h3>Michael O. de Jesus</h3>
+            <p>President and Chief Executive Officer (CEO)</p>
+            <p>As the CEO, Mr. de Jesus leads the overall management and administration of DBP's operations. He also serves as the Vice Chairman of the Board of Directors, playing a pivotal role in policy formulation and strategic planning.</p>
+          </div>
+        </div>
+        
+        <div class="profile-card">
+          <div class="profile-image">
+            <img src="https://static.thenounproject.com/png/4366918-200.png" alt="EVP Corporate Services">
+          </div>
+          <div class="profile-details">
+            <h3>PRIVATE</h3>
+            <p>Executive Vice President, Corporate Services Sector</p>
+            <p>Responsible for overseeing the bank's corporate services, including human resources, legal affairs, and administrative functions.</p>
+          </div>
+        </div>
+        
+        <div class="profile-card">
+          <div class="profile-image">
+            <img src="https://static.thenounproject.com/png/4366918-200.png" alt="EVP Lending and Credit" style="width: 100%; height: auto; border-radius: 50%; border: 3px solid #004d99;">
+          </div>
+          <div class="profile-details">
+            <h3>PRIVATE</h3>
+            <p>Executive Vice President, Lending and Credit Sector</p>
+            <p>Leads the development and management of DBP's lending programs, ensuring credit policies support developmental goals.</p>
+          </div>
+        </div>
+        
+        <div class="profile-card">
+          <div class="profile-image">
+            <img src="https://static.thenounproject.com/png/4366918-200.png" alt="EVP Treasury and Investment" style="width: 100%; height: auto; border-radius: 50%; border: 3px solid #004d99;">
+          </div>
+          <div class="profile-details">
+            <h3>PRIVATE</h3>
+            <p>Executive Vice President, Treasury and Investment Sector</p>
+            <p>Manages the bank's treasury operations, investment portfolios, and funding strategies to maintain financial stability.</p>
+          </div>
+        </div>
+        
+        <div class="profile-card">
+          <div class="profile-image">
+            <img src="https://static.thenounproject.com/png/4366918-200.png" alt="EVP Branch Banking" style="width: 100%; height: auto; border-radius: 50%; border: 3px solid #004d99;">
+          </div>
+          <div class="profile-details">
+            <h3>PRIVATE</h3>
+            <p>Executive Vice President, Branch Banking Sector</p>
+            <p>Oversees the operations of DBP's branch network, ensuring the delivery of banking services across various regions.</p>
+          </div>
+        </div>
+      </div>
+      
+      <div style="margin-top: 20px; background-color: #f0f7ff; padding: 15px; border-radius: 8px;">
+        <p style="font-style: italic; color: #555;">Note: Specific names for the Executive Vice Presidents are not publicly disclosed in the available sources. For the most accurate and up-to-date information, please refer to the official DBP website or contact the bank directly.</p>
+      </div>
+      
+      <h3 style="color: #004d99; margin-top: 40px; margin-bottom: 20px;">Functions of the Management Committee</h3>
+      
+      <div style="display: flex; flex-wrap: wrap; gap: 20px; margin-bottom: 30px;">
+        <div style="flex: 1; min-width: 300px; background-color: #f9f9f9; padding: 20px; border-radius: 8px; border-left: 4px solid #004d99;">
+          <h4 style="color: #004d99; margin-bottom: 10px;">Strategic Planning</h4>
+          <p>Develops and implements strategies to achieve DBP's mission and objectives.</p>
+        </div>
+        
+        <div style="flex: 1; min-width: 300px; background-color: #f9f9f9; padding: 20px; border-radius: 8px; border-left: 4px solid #004d99;">
+          <h4 style="color: #004d99; margin-bottom: 10px;">Operational Oversight</h4>
+          <p>Monitors the performance of various sectors and ensures efficient service delivery.</p>
+        </div>
+        
+        <div style="flex: 1; min-width: 300px; background-color: #f9f9f9; padding: 20px; border-radius: 8px; border-left: 4px solid #004d99;">
+          <h4 style="color: #004d99; margin-bottom: 10px;">Policy Implementation</h4>
+          <p>Executes policies set by the Board of Directors and ensures compliance with regulatory requirements.</p>
+        </div>
+        
+        <div style="flex: 1; min-width: 300px; background-color: #f9f9f9; padding: 20px; border-radius: 8px; border-left: 4px solid #004d99;">
+          <h4 style="color: #004d99; margin-bottom: 10px;">Risk Management</h4>
+          <p>Identifies and mitigates risks associated with the bank's operations and investments.</p>
+        </div>
+        
+        <div style="flex: 1; min-width: 300px; background-color: #f9f9f9; padding: 20px; border-radius: 8px; border-left: 4px solid #004d99;">
+          <h4 style="color: #004d99; margin-bottom: 10px;">Stakeholder Engagement</h4>
+          <p>Collaborates with government agencies, private sector partners, and other stakeholders to promote developmental initiatives.</p>
+        </div>
+      </div>
+      
+      <p>The Management Committee's collective expertise and leadership are instrumental in steering DBP towards its vision of becoming a world-class development financial institution.</p>
+      
+      <div style="margin-top: 40px; background-color: #f0f7ff; padding: 25px; border-radius: 8px;">
+        <p>For more detailed information about the Management Committee and their profiles, you may visit the <a href="https://www.dbp.ph/about-dbp/board-of-directors-management/" style="color: #004d99; text-decoration: none; font-weight: bold;">official DBP website: DBP Board of Directors and Management</a>.</p>
+      </div>
+      <div class="page-nav">
+        <button class="nav-btn" id="prev-btn">Previous</button>
+        <button class="nav-btn" id="next-btn">Next</button>
+      </div>
+    </section>
+
+    <!-- Capital Structure Section -->
+    <section id="capital">
+      <h2>Capital Structure and Adequacy</h2>
+      <p>The Development Bank of the Philippines (DBP), as a government-owned development financial institution, maintains a strong and stable capital structure that supports its role in funding critical infrastructure, agriculture, SMEs, education, and other priority sectors. Its capital structure typically consists of the following components:</p>
+      
+      <div style="margin-top: 30px;">
+        <h3 style="color: #004d99; border-bottom: 2px solid #004d99; padding-bottom: 10px; margin-bottom: 20px;">Capital Structure</h3>
+        
+        <div style="display: flex; flex-wrap: wrap; gap: 25px; margin-bottom: 40px;">
+          <!-- Authorized Capital Stock -->
+          <div style="flex: 1; min-width: 300px; background-color: #f0f7ff; padding: 25px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+            <h4 style="color: #004d99; margin-bottom: 15px;">Authorized Capital Stock</h4>
+            <div style="display: flex; align-items: center; margin-bottom: 15px;">
+              <div style="width: 60px; height: 60px; background-color: #004d99; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-right: 15px;">
+                <span style="color: white; font-weight: bold; font-size: 1.2em;">₱35B</span>
+              </div>
+              <div>
+                <p>DBP's authorized capital stock is ₱35 billion, divided into common shares with a par value of ₱100 each.</p>
+              </div>
+            </div>
+            <p>A significant portion of this capital stock is subscribed and paid by the Republic of the Philippines, making it a fully government-owned institution.</p>
+          </div>
+          
+          <!-- Paid-up Capital -->
+          <div style="flex: 1; min-width: 300px; background-color: #f0f7ff; padding: 25px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+            <h4 style="color: #004d99; margin-bottom: 15px;">Paid-up Capital</h4>
+            <p>DBP's paid-up capital reflects the actual capital infused by the national government, and forms the core foundation of its lending and investment operations.</p>
+          </div>
+          
+          <!-- Equity Reserves and Surplus -->
+          <div style="flex: 1; min-width: 300px; background-color: #f0f7ff; padding: 25px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+            <h4 style="color: #004d99; margin-bottom: 15px;">Equity Reserves and Surplus</h4>
+            <p>Includes retained earnings, capital reserves, and revaluation surplus that have accumulated over the years from operations, investments, and asset appreciation.</p>
+          </div>
+        </div>
+        
+        <h3 style="color: #004d99; border-bottom: 2px solid #004d99; padding-bottom: 10px; margin-bottom: 20px;">Capital Adequacy</h3>
+        
+        <p>DBP complies with the Basel III framework as enforced by the Bangko Sentral ng Pilipinas (BSP), which sets standards for capital adequacy and financial resilience. Capital Adequacy Ratio (CAR) is a key measure of a bank's financial health.</p>
+        
+        <div style="display: flex; flex-wrap: wrap; gap: 25px; margin-top: 25px; margin-bottom: 40px;">
+          <!-- Capital Adequacy Ratio -->
+          <div style="flex: 1; min-width: 300px; background-color: #f9f9f9; padding: 25px; border-radius: 8px; border-left: 5px solid #004d99;">
+            <h4 style="color: #004d99; margin-bottom: 15px;">Capital Adequacy Ratio (CAR)</h4>
+            <p>As of the latest reports, DBP maintains a CAR well above the BSP minimum requirement of 10% for government banks.</p>
+            <p style="margin-top: 10px;">This ensures that the bank has sufficient capital buffer to absorb risks and continue lending even in adverse economic conditions.</p>
+          </div>
+          
+          <!-- Risk-Weighted Assets -->
+          <div style="flex: 1; min-width: 300px; background-color: #f9f9f9; padding: 25px; border-radius: 8px; border-left: 5px solid #004d99;">
+            <h4 style="color: #004d99; margin-bottom: 15px;">Risk-Weighted Assets (RWA)</h4>
+            <p>DBP regularly evaluates its risk exposure and adjusts its capital reserves accordingly to maintain a healthy balance between risk and capital.</p>
+          </div>
+        </div>
+        
+        <h3 style="color: #004d99; border-bottom: 2px solid #004d99; padding-bottom: 10px; margin-bottom: 20px;">Regulatory Compliance</h3>
+        
+        <p>DBP's capital structure and adequacy are regularly monitored by:</p>
+        
+        <div style="display: flex; flex-wrap: wrap; gap: 15px; margin-top: 20px;">
+          <div style="flex: 1; min-width: 200px; background-color: #f0f7ff; padding: 15px; border-radius: 8px; text-align: center;">
+            <h4 style="color: #004d99; margin-bottom: 10px;">Bangko Sentral ng Pilipinas (BSP)</h4>
+          </div>
+          <div style="flex: 1; min-width: 200px; background-color: #f0f7ff; padding: 15px; border-radius: 8px; text-align: center;">
+            <h4 style="color: #004d99; margin-bottom: 10px;">Commission on Audit (COA)</h4>
+          </div>
+          <div style="flex: 1; min-width: 200px; background-color: #f0f7ff; padding: 15px; border-radius: 8px; text-align: center;">
+            <h4 style="color: #004d99; margin-bottom: 10px;">Department of Finance (DOF)</h4>
+          </div>
+        </div>
+        
+        <p style="margin-top: 25px;">These agencies ensure that DBP remains solvent, stable, and capable of fulfilling its developmental mandate while safeguarding public funds.</p>
+        
+        <div style="margin-top: 40px; background-color: #f0f7ff; padding: 25px; border-radius: 8px; border-left: 5px solid #004d99;">
+          <p>DBP's sound capital base reflects its fiscal discipline, prudent risk management, and commitment to financial stability, all of which enable it to carry out large-scale lending programs that contribute to national development.</p>
+        </div>
+      </div>
+      <div class="page-nav">
+        <button class="nav-btn" id="prev-btn">Previous</button>
+        <button class="nav-btn" id="next-btn">Next</button>
+      </div>
+    </section>
+
+    <!-- Corporate Governance Section -->
+    <section id="governance">
+      <h2>Corporate Governance</h2>
+      <p>Development Bank of the Philippines (DBP) is committed to upholding the highest standards of corporate governance, ensuring transparency, accountability, and ethical practices in all its operations.</p>
+      
+      <div style="margin-top: 30px; background-color: #f0f7ff; padding: 30px; border-radius: 10px; text-align: center;">
+        <h3 style="color: #004d99; margin-bottom: 20px;">Access DBP's Corporate Governance Information</h3>
+        <div style="display: inline-block; background-color: #004d99; color: white; padding: 15px 30px; border-radius: 30px; margin-bottom: 20px; font-size: 1.2em;">
+          <a href="https://www.dbp.ph/dbp-transparency-seal-2/corporate-governance/" style="color: white; text-decoration: none; display: flex; align-items: center;" target="_blank">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 10px;"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg>
+            DBP Corporate Governance Portal
+          </a>
+        </div>
+        <p style="margin-bottom: 25px;">This portal provides comprehensive details on DBP's governance framework, including institutional matters, board and officer information, financial and operational reports, and governance policies.</p>
+      </div>
+      
+      <h3 style="color: #004d99; margin-top: 40px; margin-bottom: 20px;">Key Governance Documents</h3>
+      
+      <div style="display: flex; flex-wrap: wrap; gap: 20px;">
+        <div style="flex: 1; min-width: 300px; background-color: #f9f9f9; padding: 25px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+          <div style="display: flex; align-items: center; margin-bottom: 15px;">
+            <div style="min-width: 40px; margin-right: 15px;">
+              <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#004d99" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+            </div>
+            <div>
+              <h4 style="color: #004d99; margin-bottom: 5px;">2023 Annual Corporate Governance Report</h4>
+            </div>
+          </div>
+          <p style="margin-bottom: 20px;">Comprehensive report on DBP's corporate governance practices and compliance for the year 2023.</p>
+          <a href="https://www.dbp.ph/wp-content/uploads/2024/09/2023-Annual-Corporate-Governance-Report.pdf" style="display: inline-block; background-color: #004d99; color: white; padding: 8px 15px; border-radius: 5px; text-decoration: none; font-size: 0.9em;" target="_blank">View Document</a>
+        </div>
+        
+        <div style="flex: 1; min-width: 300px; background-color: #f9f9f9; padding: 25px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+          <div style="display: flex; align-items: center; margin-bottom: 15px;">
+            <div style="min-width: 40px; margin-right: 15px;">
+              <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#004d99" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+            </div>
+            <div>
+              <h4 style="color: #004d99; margin-bottom: 5px;">Revised Manual of Corporate Governance</h4>
+            </div>
+          </div>
+          <p style="margin-bottom: 20px;">Outlines the principles, structures, and processes that guide DBP's corporate governance framework.</p>
+          <a href="https://www.dbp.ph/wp-content/uploads/2018/05/D5.pdf" style="display: inline-block; background-color: #004d99; color: white; padding: 8px 15px; border-radius: 5px; text-decoration: none; font-size: 0.9em;" target="_blank">View Document</a>
+        </div>
+      </div>
+      
+      <div style="margin-top: 40px; background-color: #f0f7ff; padding: 25px; border-radius: 8px; border-left: 5px solid #004d99;">
+        <p>These resources outline DBP's commitment to transparency, accountability, and adherence to best practices in corporate governance.</p>
+      </div>
+      <div class="page-nav">
+        <button class="nav-btn" id="prev-btn">Previous</button>
+        <button class="nav-btn" id="next-btn">Next</button>
+      </div>
+    </section>
+
+    <!-- Corporate Social Responsibility Section -->
+    <section id="csr">
+      <h2>Corporate Social Responsibility</h2>
+      <p>The Development Bank of the Philippines is dedicated to driving sustainable development and improving the quality of life for Filipinos through its various Corporate Social Responsibility (CSR) initiatives. These programs reflect DBP's commitment to environmental stewardship, education, community health, and national progress.</p>
+      
+      <div style="display: flex; flex-wrap: wrap; gap: 25px; margin-top: 30px;">
+        <!-- DBP Forest Program -->
+        <div style="flex: 1; min-width: 300px; background-color: #f0f7ff; padding: 25px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+          <div style="display: flex; align-items: center; margin-bottom: 15px;">
+            <div style="min-width: 40px; margin-right: 15px;">
+              <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#004d99" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 14v6m-3-3h6M6 20a6 6 0 01-6-6c0-4 2-5 3-6a1 1 0 011.5 1.5 5 5 0 002.5 7M12 4a6 6 0 016 6c0 4-2 5-3 6a1 1 0 01-1.5-1.5 5 5 0 00-2.5-7"/></svg>
+            </div>
+            <div>
+              <h3 style="color: #004d99; margin-bottom: 5px;">DBP Forest Program</h3>
+            </div>
+          </div>
+          <p>A comprehensive environmental initiative that has facilitated the reforestation of thousands of hectares across the Philippines. Through partnerships with local governments, indigenous communities, and environmental organizations, the program focuses on watershed rehabilitation, biodiversity conservation, and sustainable forest management practices.</p>
+        </div>
+        
+        <!-- DBP Endowment for Education Program -->
+        <div style="flex: 1; min-width: 300px; background-color: #f0f7ff; padding: 25px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+          <div style="display: flex; align-items: center; margin-bottom: 15px;">
+            <div style="min-width: 40px; margin-right: 15px;">
+              <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#004d99" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
+            </div>
+            <div>
+              <h3 style="color: #004d99; margin-bottom: 5px;">DBP Endowment for Education Program</h3>
+            </div>
+          </div>
+          <p>Provides scholarships, educational infrastructure support, and capacity-building initiatives for underprivileged students and educational institutions. The program aims to improve access to quality education and develop a skilled workforce that contributes to national development. It has supported thousands of scholars and numerous schools throughout the country.</p>
+        </div>
+      </div>
+      
+      <div style="display: flex; flex-wrap: wrap; gap: 25px; margin-top: 25px;">
+        <!-- DBP Lending Initiative for Sanitation (LINIS) Program -->
+        <div style="flex: 1; min-width: 300px; background-color: #f0f7ff; padding: 25px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+          <div style="display: flex; align-items: center; margin-bottom: 15px;">
+            <div style="min-width: 40px; margin-right: 15px;">
+              <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#004d99" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"></path></svg>
+            </div>
+            <div>
+              <h3 style="color: #004d99; margin-bottom: 5px;">DBP Lending Initiative for Sanitation (LINIS) Program</h3>
+            </div>
+          </div>
+          <p>Addresses water access and sanitation challenges in underserved communities by providing financing solutions for water supply systems, wastewater treatment facilities, and solid waste management projects. The program promotes public health, environmental protection, and sustainable community development through improved water and sanitation infrastructure.</p>
+        </div>
+        
+        <!-- DBP Green Climate Fund -->
+        <div style="flex: 1; min-width: 300px; background-color: #f0f7ff; padding: 25px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+          <div style="display: flex; align-items: center; margin-bottom: 15px;">
+            <div style="min-width: 40px; margin-right: 15px;">
+              <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#004d99" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+            </div>
+            <div>
+              <h3 style="color: #004d99; margin-bottom: 5px;">DBP Green Climate Fund</h3>
+            </div>
+          </div>
+          <p>Mobilizes resources to support climate change mitigation and adaptation projects across the Philippines. The fund provides financing for renewable energy, energy efficiency, sustainable transportation, and climate-resilient agriculture initiatives. By channeling investments into climate-friendly projects, DBP contributes to the country's transition to a low-carbon, climate-resilient economy.</p>
+        </div>
+      </div>
+      
+      <!-- DBP Social Policy Statement -->
+      <div style="margin-top: 25px; background-color: #f0f7ff; padding: 25px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+        <div style="display: flex; align-items: center; margin-bottom: 15px;">
+          <div style="min-width: 40px; margin-right: 15px;">
+            <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#004d99" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
+          </div>
+          <div>
+            <h3 style="color: #004d99; margin-bottom: 5px;">DBP Social Policy Statement</h3>
+          </div>
+        </div>
+        <p>Guides the bank's operations and investments to ensure alignment with social and environmental sustainability principles. The policy promotes responsible banking practices, stakeholder engagement, and social impact assessment. Through this framework, DBP integrates social responsibility considerations into its core business activities and lending decisions.</p>
+      </div>
+      
+      <div style="margin-top: 30px; background-color: #004d99; padding: 30px; border-radius: 10px; text-align: center; color: white;">
+        <h3 style="color: white; margin-bottom: 20px;">Learn More About DBP's CSR Initiatives</h3>
+        <div style="display: inline-block; background-color: white; padding: 15px 30px; border-radius: 30px; margin-bottom: 20px; font-size: 1.2em;">
+          <a href="https://www.dbp.ph/corporate-social-responsibility/" style="color: #004d99; text-decoration: none; display: flex; align-items: center; justify-content: center;" target="_blank">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 10px;"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+            Visit DBP CSR Webpage
+          </a>
+        </div>
+        <p>Discover how DBP is making a positive impact on communities and the environment through its comprehensive CSR programs.</p>
+      </div>
+      <div class="page-nav">
+        <button class="nav-btn" id="prev-btn">Previous</button>
+        <button class="nav-btn" id="next-btn">Next</button>
+      </div>
+    </section>
+
+    <!-- Financial Reports Section -->
+    <section id="financial-reports">
+      
+
+      <!-- Historical Financial Reports -->
+      <h3 style="color: #004d99; margin-top: 40px; margin-bottom: 20px;">Historical Financial Performance (2018-2020)</h3>
+      
+      <div style="display: flex; flex-wrap: wrap; gap: 25px; margin-top: 25px;">
+        <!-- 2020 Financial Report -->
+        <div style="flex: 1; min-width: 300px; background-color: #f0f7ff; padding: 25px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+          <div style="display: flex; align-items: center; margin-bottom: 15px;">
+            <div style="min-width: 40px; margin-right: 15px;">
+              <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#004d99" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg>
+            </div>
+            <div>
+              <h3 style="color: #004d99; margin-bottom: 5px;">2020 Financial Highlights</h3>
+            </div>
+          </div>
+          <ul style="list-style-type: none; padding-left: 0;">
+            <li style="margin-bottom: 8px;"><strong>Net Income:</strong> ₱4.5 billion</li>
+            <li style="margin-bottom: 8px;"><strong>Total Assets:</strong> ₱1.04 trillion</li>
+            <li style="margin-bottom: 8px;"><strong>Total Loan Portfolio:</strong> ₱458.4 billion</li>
+            <li style="margin-bottom: 8px;"><strong>Total Deposits:</strong> ₱700 billion</li>
+            <li style="margin-bottom: 8px;"><strong>Capital:</strong> ₱63.6 billion</li>
+            <li style="margin-bottom: 8px;"><strong>Return on Assets (ROA):</strong> 0.43%</li>
+            <li style="margin-bottom: 8px;"><strong>Return on Equity (ROE):</strong> 7.1%</li>
+          </ul>
+          <div style="display: flex; gap: 10px; margin-top: 20px;">
+            <a href="https://www.dbp.ph/wp-content/uploads/2021/10/DBP-2020-Annual-Report.pdf" style="display: inline-block; background-color: #004d99; color: white; padding: 8px 15px; border-radius: 5px; text-decoration: none; font-size: 0.9em;" target="_blank">Access Report</a>
+          </div>
+        </div>
+        
+        <!-- 2019 Financial Report -->
+        <div style="flex: 1; min-width: 300px; background-color: #f0f7ff; padding: 25px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+          <div style="display: flex; align-items: center; margin-bottom: 15px;">
+            <div style="min-width: 40px; margin-right: 15px;">
+              <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#004d99" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg>
+            </div>
+            <div>
+              <h3 style="color: #004d99; margin-bottom: 5px;">2019 Financial Highlights</h3>
+            </div>
+          </div>
+          <ul style="list-style-type: none; padding-left: 0;">
+            <li style="margin-bottom: 8px;"><strong>Net Income:</strong> ₱6.06 billion (5.94% increase from 2018)</li>
+            <li style="margin-bottom: 8px;"><strong>Total Assets:</strong> ₱762.17 billion (13.83% increase from 2018)</li>
+            <li style="margin-bottom: 8px;"><strong>Total Loan Portfolio:</strong> ₱414.06 billion (25.88% increase from 2018)</li>
+            <li style="margin-bottom: 8px;"><strong>Total Deposits:</strong> ₱554.63 billion (16.9% increase from 2018)</li>
+            <li style="margin-bottom: 8px;"><strong>Capital:</strong> ₱60.29 billion (16.57% increase from 2018)</li>
+            <li style="margin-bottom: 8px;"><strong>Return on Assets (ROA):</strong> 0.85%</li>
+            <li style="margin-bottom: 8px;"><strong>Return on Equity (ROE):</strong> 10.82%</li>
+          </ul>
+          <div style="display: flex; gap: 10px; margin-top: 20px;">
+            <a href="https://www.dbp.ph/wp-content/uploads/2020/12/Dec21_DBP-2019-AR-final_uploading_compressed.pdf" style="display: inline-block; background-color: #004d99; color: white; padding: 8px 15px; border-radius: 5px; text-decoration: none; font-size: 0.9em;" target="_blank">Access Report</a>
+          </div>
+        </div>
+      </div>
+      
+      <div style="display: flex; flex-wrap: wrap; gap: 25px; margin-top: 25px;">
+        <!-- 2018 Financial Report -->
+        <div style="flex: 1; min-width: 300px; background-color: #f0f7ff; padding: 25px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+          <div style="display: flex; align-items: center; margin-bottom: 15px;">
+            <div style="min-width: 40px; margin-right: 15px;">
+              <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#004d99" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg>
+            </div>
+            <div>
+              <h3 style="color: #004d99; margin-bottom: 5px;">2018 Financial Highlights</h3>
+            </div>
+          </div>
+          <ul style="list-style-type: none; padding-left: 0;">
+            <li style="margin-bottom: 8px;"><strong>Net Income:</strong> ₱5.72 billion (4.19% increase from 2017)</li>
+            <li style="margin-bottom: 8px;"><strong>Total Assets:</strong> ₱669.75 billion (10% increase from 2017)</li>
+            <li style="margin-bottom: 8px;"><strong>Total Loan Portfolio:</strong> ₱328.93 billion (12% increase from 2017)</li>
+            <li style="margin-bottom: 8px;"><strong>Total Deposits:</strong> ₱474.44 billion (15% increase from 2017)</li>
+            <li style="margin-bottom: 8px;"><strong>Capital:</strong> ₱51.16 billion (6.8% increase from 2017)</li>
+          </ul>
+          <div style="display: flex; gap: 10px; margin-top: 20px;">
+            <a href="https://www.dbp.ph/wp-content/uploads/2019/09/DBP-AR_2018.pdf" style="display: inline-block; background-color: #004d99; color: white; padding: 8px 15px; border-radius: 5px; text-decoration: none; font-size: 0.9em;" target="_blank">Access Report</a>
+          </div>
+        </div>
+      </div>
+      <div class="page-nav">
+        <button class="nav-btn" id="prev-btn">Previous</button>
+        <button class="nav-btn" id="next-btn">Next</button>
+      </div>
+    </section>
+
+    <!-- Team Section -->
+    <section id="team">
+      <h2>Our Team</h2>
+      <p>This section highlights the team behind this DBP website project.</p>
+      
+      <div class="team-member">
+        <div class="team-photo">
+          <img src="https://scontent.fcgy2-3.fna.fbcdn.net/v/t39.30808-6/492751225_699383363022514_5883595371649399552_n.jpg?_nc_cat=111&ccb=1-7&_nc_sid=6ee11a&_nc_eui2=AeFEtQBImhZWI4n2m6gCzy--ph3xZVqoetWmHfFlWqh61QmKm2c4ZLv-7kihhFe-W-2bIWd7h6pZ72VJJeK98g-C&_nc_ohc=ccj_j8aOJQkQ7kNvwG4iRLY&_nc_oc=Adl0vy6U5Oe7VSdv3Fz63PBrwFGeTw3S48lgxFaTGztuOtE4POaPdHEBBHeYpacJAlc&_nc_zt=23&_nc_ht=scontent.fcgy2-3.fna&_nc_gid=LTdoqJFASSFfNuZGhTXnag&oh=00_AfE3UkUOSlnSM5sjPzHLv8u3n3glIlBNeq5k6Db_kQcDsA&oe=680EB6C0" alt="Team Member 1">
+        </div>
+        <div class="team-info">
+          <h3>JOHN PAUL S. LUNDA</h3>
+          <p>BSBA STUDENT</p>
+        </div>
+      </div>
+      
+      <div class="team-member">
+        <div class="team-photo">
+          <img src="https://scontent.fcgy2-4.fna.fbcdn.net/v/t39.30808-6/492163751_1358751671935529_122508924569907874_n.jpg?_nc_cat=108&ccb=1-7&_nc_sid=833d8c&_nc_eui2=AeGuVwvXGDpn0KiZPLj056lIAaMhBI8uylIBoyEEjy7KUifKlczaDts6_Y73tVKBEfQCLxrghJMb9SdetTaiUwvw&_nc_ohc=EL2HNosy2HYQ7kNvwEMd43B&_nc_oc=AdnYbFhX9_S6JJacsauPb_UuoB_bjEV1ES8ff1Hz4xGw59scMXlTpSal0lD2J4iPH3Q&_nc_zt=23&_nc_ht=scontent.fcgy2-4.fna&_nc_gid=2tlMcl9hI_0odQqnPQysvA&oh=00_AfEvhqvlu6oRvh_VoseXoq3k0y4MuuLxwZflvWvA644qPQ&oe=680E9915" alt="Team Member 2">  
+        </div>
+        <div class="team-info">
+          <h3>ROMEL N. MANGINSAY JR.</h3>
+          <p>BSBA STUDENT</p>
+        </div>
+      </div>
+      <div class="page-nav">
+        <button class="nav-btn" id="prev-btn">Previous</button>
+        <button class="nav-btn" id="next-btn">Next</button>
+      </div>
+    </section>
+
+    <!-- References Section -->
+    <section id="references">
+      <h2>References</h2>
+      <p>The information presented on this website has been compiled from various authoritative sources, including official publications, government documents, and credible financial resources. Below is a comprehensive list of references used in the development of this website.</p>
+      
+      <div style="margin-top: 30px;">
+        <h3 style="color: #004d99; border-bottom: 2px solid #004d99; padding-bottom: 10px;">Official DBP Publications</h3>
+        <ul style="padding-left: 20px; margin-top: 15px; list-style-type: none;">
+          <li style="margin-bottom: 15px; padding-left: 25px; position: relative;">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#004d99" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="position: absolute; left: 0; top: 4px;"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+            Development Bank of the Philippines. (2023). <i>2023 Annual and Sustainability Report</i>. Retrieved from <a href="https://www.dbp.ph/publication/124115/" style="color: #004d99; text-decoration: none;" target="_blank">https://www.dbp.ph/publication/124115/</a>
+          </li>
+          <li style="margin-bottom: 15px; padding-left: 25px; position: relative;">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#004d99" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="position: absolute; left: 0; top: 4px;"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+            Development Bank of the Philippines. (2022). <i>2022 Annual and Sustainable Development Report</i>. Retrieved from <a href="https://www.dbp.ph/publication/2022-annual-and-sustainable-development-report/" style="color: #004d99; text-decoration: none;" target="_blank">https://www.dbp.ph/publication/2022-annual-and-sustainable-development-report/</a>
+          </li>
+          <li style="margin-bottom: 15px; padding-left: 25px; position: relative;">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#004d99" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="position: absolute; left: 0; top: 4px;"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+            Development Bank of the Philippines. (2021). <i>2021 Annual and Sustainable Development Report</i>. Retrieved from <a href="https://www.dbp.ph/publication/2021-annual-and-sustainable-development-report/" style="color: #004d99; text-decoration: none;" target="_blank">https://www.dbp.ph/publication/2021-annual-and-sustainable-development-report/</a>
+          </li>
+          <li style="margin-bottom: 15px; padding-left: 25px; position: relative;">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#004d99" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="position: absolute; left: 0; top: 4px;"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+            Development Bank of the Philippines. (2023). <i>Annual Corporate Governance Report</i>. Retrieved from <a href="https://www.dbp.ph/wp-content/uploads/2024/09/2023-Annual-Corporate-Governance-Report.pdf" style="color: #004d99; text-decoration: none;" target="_blank">https://www.dbp.ph/wp-content/uploads/2024/09/2023-Annual-Corporate-Governance-Report.pdf</a>
+          </li>
+          <li style="margin-bottom: 15px; padding-left: 25px; position: relative;">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#004d99" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="position: absolute; left: 0; top: 4px;"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+            Development Bank of the Philippines. (2018). <i>Revised Manual of Corporate Governance</i>. Retrieved from <a href="https://www.dbp.ph/wp-content/uploads/2018/05/D5.pdf" style="color: #004d99; text-decoration: none;" target="_blank">https://www.dbp.ph/wp-content/uploads/2018/05/D5.pdf</a>
+          </li>
+        </ul>
+      </div>
+      
+      <div style="margin-top: 30px;">
+        <h3 style="color: #004d99; border-bottom: 2px solid #004d99; padding-bottom: 10px;">Official Government Resources</h3>
+        <ul style="padding-left: 20px; margin-top: 15px; list-style-type: none;">
+          <li style="margin-bottom: 15px; padding-left: 25px; position: relative;">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#004d99" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="position: absolute; left: 0; top: 4px;"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>
+            Bangko Sentral ng Pilipinas. (2023). <i>Directory of Banks and Non-Banks with Quasi-Banking Functions</i>. Retrieved from <a href="https://www.bsp.gov.ph/Pages/BankingSystem/BanksNonBanks.aspx" style="color: #004d99; text-decoration: none;" target="_blank">https://www.bsp.gov.ph/Pages/BankingSystem/BanksNonBanks.aspx</a>
+          </li>
+          <li style="margin-bottom: 15px; padding-left: 25px; position: relative;">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#004d99" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="position: absolute; left: 0; top: 4px;"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>
+            Government Commission for GOCCs (GCG). (2022). <i>The GOCC Governance Act of 2011</i>. Retrieved from <a href="https://gcg.gov.ph/site/ra10149" style="color: #004d99; text-decoration: none;" target="_blank">https://gcg.gov.ph/site/ra10149</a>
+          </li>
+          <li style="margin-bottom: 15px; padding-left: 25px; position: relative;">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#004d99" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="position: absolute; left: 0; top: 4px;"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>
+            Department of Finance. (2023). <i>Government Financial Institutions</i>. Retrieved from <a href="https://www.dof.gov.ph/gfis/" style="color: #004d99; text-decoration: none;" target="_blank">https://www.dof.gov.ph/gfis/</a>
+          </li>
+          <li style="margin-bottom: 15px; padding-left: 25px; position: relative;">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#004d99" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="position: absolute; left: 0; top: 4px;"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>
+            Securities and Exchange Commission. (2021). <i>Corporate Governance Code for GOCCs</i>. Retrieved from <a href="https://www.sec.gov.ph/mc-2021/mc-no-02-s-2021-code-of-corporate-governance-for-goccs-2/" style="color: #004d99; text-decoration: none;" target="_blank">https://www.sec.gov.ph/mc-2021/mc-no-02-s-2021-code-of-corporate-governance-for-goccs-2/</a>
+          </li>
+        </ul>
+      </div>
+      
+      <div style="margin-top: 30px;">
+        <h3 style="color: #004d99; border-bottom: 2px solid #004d99; padding-bottom: 10px;">DBP Online Resources</h3>
+        <ul style="padding-left: 20px; margin-top: 15px; list-style-type: none;">
+          <li style="margin-bottom: 15px; padding-left: 25px; position: relative;">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#004d99" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="position: absolute; left: 0; top: 4px;"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5.5 5.5 0 0 0 7.07 7.07l1.71-1.71"></path></svg>
+            Development Bank of the Philippines. (2023). <i>Official Website - Corporate Profile</i>. Retrieved from <a href="https://www.dbp.ph/about-dbp/" style="color: #004d99; text-decoration: none;" target="_blank">https://www.dbp.ph/about-dbp/</a>
+          </li>
+          <li style="margin-bottom: 15px; padding-left: 25px; position: relative;">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#004d99" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="position: absolute; left: 0; top: 4px;"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5.5 5.5 0 0 0 7.07 7.07l1.71-1.71"></path></svg>
+            Development Bank of the Philippines. (2023). <i>Board of Directors and Management</i>. Retrieved from <a href="https://www.dbp.ph/about-dbp/board-of-directors-management/" style="color: #004d99; text-decoration: none;" target="_blank">https://www.dbp.ph/about-dbp/board-of-directors-management/</a>
+          </li>
+          <li style="margin-bottom: 15px; padding-left: 25px; position: relative;">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#004d99" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="position: absolute; left: 0; top: 4px;"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5.5 5.5 0 0 0 7.07 7.07l1.71-1.71"></path></svg>
+            Development Bank of the Philippines. (2023). <i>Corporate Social Responsibility Page</i>. Retrieved from <a href="https://www.dbp.ph/corporate-social-responsibility/" style="color: #004d99; text-decoration: none;" target="_blank">https://www.dbp.ph/corporate-social-responsibility/</a>
+          </li>
+          <li style="margin-bottom: 15px; padding-left: 25px; position: relative;">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#004d99" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="position: absolute; left: 0; top: 4px;"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5.5 5.5 0 0 0 7.07 7.07l1.71-1.71"></path></svg>
+            Development Bank of the Philippines. (2023). <i>Products and Services</i>. Retrieved from <a href="https://www.dbp.ph/banking-services/" style="color: #004d99; text-decoration: none;" target="_blank">https://www.dbp.ph/banking-services/</a>
+          </li>
+          <li style="margin-bottom: 15px; padding-left: 25px; position: relative;">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#004d99" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="position: absolute; left: 0; top: 4px;"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5.5 5.5 0 0 0 7.07 7.07l1.71-1.71"></path></svg>
+            Development Bank of the Philippines. (2023). <i>Branch Locator</i>. Retrieved from <a href="https://www.dbp.ph/find-us/" style="color: #004d99; text-decoration: none;" target="_blank">https://www.dbp.ph/find-us/</a>
+          </li>
+        </ul>
+      </div>
+      
+      <div style="margin-top: 30px;">
+        <h3 style="color: #004d99; border-bottom: 2px solid #004d99; padding-bottom: 10px;">News Articles and Press Releases</h3>
+        <ul style="padding-left: 20px; margin-top: 15px; list-style-type: none;">
+          <li style="margin-bottom: 15px; padding-left: 25px; position: relative;">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#004d99" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="position: absolute; left: 0; top: 4px;"><path d="M11 4h10v18H11a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z"></path><path d="M18 9v12"></path><path d="M3 9h7"></path><path d="M3 15h7"></path></svg>
+            Development Bank of the Philippines. (2023, March 15). <i>DBP Expands Green Financing Program</i>. DBP Press Releases. Retrieved from <a href="https://www.dbp.ph/news/" style="color: #004d99; text-decoration: none;" target="_blank">https://www.dbp.ph/news/</a>
+          </li>
+          <li style="margin-bottom: 15px; padding-left: 25px; position: relative;">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#004d99" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="position: absolute; left: 0; top: 4px;"><path d="M11 4h10v18H11a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z"></path><path d="M18 9v12"></path><path d="M3 9h7"></path><path d="M3 15h7"></path></svg>
+            BusinessWorld. (2022, December 8). <i>DBP Secures P5-Billion Facility for Climate Projects</i>. Retrieved from <a href="https://www.bworldonline.com/banking-finance/" style="color: #004d99; text-decoration: none;" target="_blank">https://www.bworldonline.com/banking-finance/</a>
+          </li>
+          <li style="margin-bottom: 15px; padding-left: 25px; position: relative;">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#004d99" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="position: absolute; left: 0; top: 4px;"><path d="M11 4h10v18H11a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z"></path><path d="M18 9v12"></path><path d="M3 9h7"></path><path d="M3 15h7"></path></svg>
+            Manila Bulletin. (2023, June 12). <i>DBP Strengthens Financial Inclusion Programs in Rural Areas</i>. Retrieved from <a href="https://mb.com.ph/business/banking-and-finance" style="color: #004d99; text-decoration: none;" target="_blank">https://mb.com.ph/business/banking-and-finance</a>
+          </li>
+        </ul>
+      </div>
+      
+      <div style="margin-top: 40px; background-color: #f9f9f9; padding: 25px; border-radius: 8px; border-left: 5px solid #004d99;">
+        <h3 style="color: #004d99; margin-bottom: 15px;">Image Credits</h3>
+        <p>All images of the DBP Board of Directors and Management Committee were sourced from official DBP publications, press releases, and the official DBP website, with appropriate permissions for educational use. Profile images have been used solely for educational purposes as part of this academic project.</p>
+      </div>
+      <div class="page-nav">
+        <button class="nav-btn" id="prev-btn">Previous</button>
+        <button class="nav-btn" id="next-btn">Next</button>
+      </div>
+    </section>
+
+    <!-- Disclaimer Section -->
+    <section id="disclaimer">
+      <h2>Disclaimer</h2>
+      <div class="disclaimer">
+        <p>This website was created for educational purposes only. It is not affiliated with or endorsed by the Development Bank of the Philippines. The information presented here is gathered from publicly available sources and may not be up-to-date or entirely accurate. This project is part of an academic exercise.</p>
+      </div>
+      <div class="page-nav">
+        <button class="nav-btn" id="prev-btn">Previous</button>
+        <button class="nav-btn" id="next-btn" disabled>Next</button>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    // Array of all section IDs in order
+    const sections = [
+      'home',
+      'background',
+      'corporate-profile',
+      'vision-mission',
+      'branches',
+      'business-scope',
+      'products-services',
+      'financial-highlights',
+      'awards',
+      'structure',
+      'board',
+      'management',
+      'capital',
+      'governance',
+      'csr',
+      'financial-reports',
+      'team',
+      'references',
+      'disclaimer'
+    ];
+    
+    // Get the current active section index from URL or default to 0 (home)
+    let currentIndex = 0;
+    const hash = window.location.hash;
+    if (hash) {
+      const sectionId = hash.substring(1); // Remove the # character
+      const foundIndex = sections.indexOf(sectionId);
+      if (foundIndex !== -1) {
+        currentIndex = foundIndex;
+      }
+    }
+    
+    // Function to show a specific section
+    function showSection(index) {
+      // Hide all sections
+      document.querySelectorAll('section').forEach(section => {
+        section.classList.remove('active');
+        section.classList.remove('page-transition');
+      });
+      
+      // Show the selected section
+      const sectionId = sections[index];
+      const section = document.getElementById(sectionId);
+      section.classList.add('active');
+      section.classList.add('page-transition');
+      
+      // Update URL hash without scrolling
+      history.replaceState(null, null, `#${sectionId}`);
+      
+      // Update navigation menu active state
+      document.querySelectorAll('.nav-menu a').forEach(link => {
+        link.classList.remove('active');
+      });
+      document.querySelector(`.nav-menu a[href="#${sectionId}"]`).classList.add('active');
+      
+      // Update prev/next buttons in all sections
+      document.querySelectorAll('.page-nav').forEach(nav => {
+        const prevBtn = nav.querySelector('#prev-btn');
+        const nextBtn = nav.querySelector('#next-btn');
+        
+        prevBtn.disabled = index === 0;
+        nextBtn.disabled = index === sections.length - 1;
+        
+        prevBtn.onclick = () => {
+          if (index > 0) {
+            showSection(index - 1);
+          }
+        };
+        
+        nextBtn.onclick = () => {
+          if (index < sections.length - 1) {
+            showSection(index + 1);
+          }
+        };
+      });
+    }
+    
+    // Initialize the page with the current section
+    showSection(currentIndex);
+    
+    // Add click event listeners to navigation menu
+    document.querySelectorAll('.nav-menu a').forEach(link => {
+      link.addEventListener('click', function(e) {
+        e.preventDefault();
+        
+        const targetId = this.getAttribute('href').substring(1);
+        const targetIndex = sections.indexOf(targetId);
+        
+        if (targetIndex !== -1) {
+          showSection(targetIndex);
+        }
+      });
+    });
+    
+    // Handle keyboard navigation
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'ArrowLeft' && currentIndex > 0) {
+        showSection(currentIndex - 1);
+      } else if (e.key === 'ArrowRight' && currentIndex < sections.length - 1) {
+        showSection(currentIndex + 1);
+      }
+    });
+  </script>
+</body>
+</html> 
